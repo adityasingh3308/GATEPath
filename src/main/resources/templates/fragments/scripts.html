@@ -1,0 +1,17 @@
+
+<div th:fragment="scripts"
+     xmlns:th="http://www.thymeleaf.org">
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        defer>
+    </script>
+
+    <!-- Header buttons: theme, notifications, account, fullscreen -->
+    <script th:src="@{/js/header.js}" defer></script>
+
+    <!-- Sidebar functionality for pages that contain a sidebar -->
+    <script th:src="@{/js/sidebar.js}" defer></script>
+
+</div>

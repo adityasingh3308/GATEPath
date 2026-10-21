@@ -1,0 +1,207 @@
+
+<aside class="app-sidebar"
+       id="app-sidebar"
+       th:fragment="sidebar"
+       xmlns:th="http://www.thymeleaf.org">
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+        <a th:href="@{/dashboard}"
+           class="sidebar-brand-link"
+           aria-label="GATEPath Dashboard">
+
+            <span class="sidebar-brand-icon">
+                <i class="bi bi-mortarboard-fill"
+                   aria-hidden="true"></i>
+            </span>
+
+            <span class="sidebar-brand-text">GATEPath</span>
+        </a>
+    </div>
+
+    <!-- Sidebar Search -->
+    <div class="sidebar-search" role="search">
+
+        <label for="sidebar-search-input"
+               class="visually-hidden">
+            Search sidebar menu
+        </label>
+
+        <div class="sidebar-search-field">
+            <i class="bi bi-search" aria-hidden="true"></i>
+
+            <input type="search"
+                   id="sidebar-search-input"
+                   placeholder="Search menu..."
+                   autocomplete="off"
+                   aria-controls="sidebar-navigation">
+        </div>
+
+        <p class="sidebar-search-empty"
+           id="sidebar-search-empty"
+           role="status"
+           hidden>
+            No matching pages.
+        </p>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-content">
+
+        <nav aria-label="Dashboard navigation">
+            <ul class="sidebar-menu" id="sidebar-navigation">
+
+                <!-- Overview -->
+                <li class="sidebar-section-title">
+                    Overview
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/dashboard}"
+                       class="sidebar-link"
+                       th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/dashboard'} ? ' active' : ''">
+                        <i class="bi bi-grid-1x2-fill"
+                           aria-hidden="true"></i>
+                        <span>My Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/papers}"
+                       class="sidebar-link">
+                        <i class="bi bi-journals"
+                           aria-hidden="true"></i>
+                        <span>My GATE Papers</span>
+                    </a>
+                </li>
+
+                <!-- Learning -->
+                <li class="sidebar-section-title">
+                    Learning
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/study-material}"
+                       class="sidebar-link">
+                        <i class="bi bi-book-half"
+                           aria-hidden="true"></i>
+                        <span>Study Material</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/practice}"
+                       class="sidebar-link">
+                        <i class="bi bi-pencil-square"
+                           aria-hidden="true"></i>
+                        <span>Practice Questions</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/pyqs}"
+                       class="sidebar-link">
+                        <i class="bi bi-file-earmark-text"
+                           aria-hidden="true"></i>
+                        <span>Previous Year Questions</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/mock-tests}"
+                       class="sidebar-link">
+                        <i class="bi bi-stopwatch"
+                           aria-hidden="true"></i>
+                        <span>Mock Tests</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/bookmarks}"
+                       class="sidebar-link">
+                        <i class="bi bi-bookmark-star"
+                           aria-hidden="true"></i>
+                        <span>My Bookmarks</span>
+                    </a>
+                </li>
+
+                <!-- Performance -->
+                <li class="sidebar-section-title">
+                    My Performance
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/progress}"
+                       class="sidebar-link">
+                        <i class="bi bi-graph-up-arrow"
+                           aria-hidden="true"></i>
+                        <span>My Progress</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/test-history}"
+                       class="sidebar-link">
+                        <i class="bi bi-clock-history"
+                           aria-hidden="true"></i>
+                        <span>Test History</span>
+                    </a>
+                </li>
+
+                <!-- Account -->
+                <li class="sidebar-section-title">
+                    Account
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/profile}"
+                       class="sidebar-link">
+                        <i class="bi bi-person-circle"
+                           aria-hidden="true"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a th:href="@{/settings}"
+                       class="sidebar-link">
+                        <i class="bi bi-gear"
+                           aria-hidden="true"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+
+                <!-- Secure Logout -->
+                <li class="sidebar-item sidebar-logout-item">
+                    <form th:action="@{/logout}"
+                          method="post"
+                          class="sidebar-logout-form">
+
+                        <input type="hidden"
+                               th:if="${_csrf != null}"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                class="sidebar-link sidebar-logout-button">
+                            <i class="bi bi-box-arrow-right"
+                               aria-hidden="true"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+
+            </ul>
+
+            <!-- Empty search state -->
+            <p class="sidebar-no-results"
+               id="sidebar-no-results"
+               role="status"
+               hidden>
+                No menu items found.
+            </p>
+
+        </nav>
+    </div>
+
+</aside>

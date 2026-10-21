@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | GATEPath</title>
+
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="icon"
+          type="image/png"
+          th:href="@{/images/favicon.png(v=12)}">
+
+</head>
+
+<body>
+<div class="page">
+
+    <section class="hero">
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark"><span>G</span></span>
+            <span>GATEPath</span>
+        </a>
+
+        <div class="hero-content">
+            <div class="eyebrow">Your GATE preparation partner</div>
+
+            <h1>
+                Your hard work.<br>
+                Your future.<br>
+                <span>Your GATE journey.</span>
+            </h1>
+
+            <p class="hero-description">
+                One focused place for your syllabus, study material,
+                previous year questions and mock tests. Build your
+                preparation one day at a time.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature">
+                    <span class="feature-icon">✓</span>
+                    <span>Organized subject-wise study material</span>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">↗</span>
+                    <span>Practice questions and mock tests</span>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">◎</span>
+                    <span>Track your preparation progress</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-footer">
+    <span>© 2026 GATEPath</span>
+    <span>Learn. Practice. Progress.</span>
+</div>
+    </section>
+
+    <main class="form-side">
+        <div class="login-card">
+
+            <a class="mobile-brand" th:href="@{/}">
+                <span class="brand-mark">G</span>
+                <span>GATEPath</span>
+            </a>
+
+            <div class="welcome-label">Welcome back</div>
+
+            <h2>Sign in to your account</h2>
+
+            <p class="subtitle">
+                Continue where you left off and keep moving towards your GATE goal.
+            </p>
+
+            <div th:if="${param.registered}" class="message success">
+                Account created successfully! Please sign in.
+            </div>
+
+            <div th:if="${param.resetSuccess}" class="message success">
+                Password reset successfully! Please sign in with your new password.
+            </div>
+
+            <div th:if="${param.error}" class="message error">
+                Invalid username or password. Please try again.
+            </div>
+
+            <div th:if="${param.logout}" class="message success">
+                You have been logged out successfully.
+            </div>
+
+            <form th:action="@{/login}" method="post">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <div class="field">
+                    <div class="field-header">
+                        <label for="username">Email address</label>
+                    </div>
+
+                    <div class="input-wrap">
+                        <input
+                            type="email"
+                            id="username"
+                            name="username"
+                            placeholder="you@example.com"
+                            autocomplete="username"
+                            required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="field-header">
+                        <label for="password">Password</label>
+
+                        <a class="forgot" th:href="@{/forgot-password}">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <div class="input-wrap">
+                        <input
+                            class="password-input"
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required>
+
+                        <button
+                            class="toggle-password"
+                            type="button"
+                            id="togglePassword"
+                            aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" name="remember-me">
+                        Remember me
+                    </label>
+
+                    <a class="forgot" th:href="@{/register}">
+                        Create account
+                    </a>
+                </div>
+
+                <button class="submit-btn" type="submit">
+                    Sign in to GATEPath <span>→</span>
+                </button>
+            </form>
+
+            <div class="divider">YOUR PREPARATION STARTS HERE</div>
+
+            <p class="register-text">
+                New to GATEPath?
+                <a th:href="@{/register}">Create an account</a>
+            </p>
+
+            <div class="security-note">
+                <span>●</span>
+                Your learning journey, in one place
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const toggleButton = document.getElementById("togglePassword");
+
+    toggleButton.addEventListener("click", function () {
+        const isHidden = passwordInput.type === "password";
+
+        passwordInput.type = isHidden ? "text" : "password";
+        toggleButton.textContent = isHidden ? "Hide" : "Show";
+
+        toggleButton.setAttribute(
+            "aria-label",
+            isHidden ? "Hide password" : "Show password"
+        );
+    });
+</script>
+
+</body>
+</html>

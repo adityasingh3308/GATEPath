@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<header th:fragment="navbar" class="navbar">
+
+    <!-- Brand -->
+    <a th:href="@{/}" class="brand" aria-label="GATEPath Home">
+        <span class="brand-icon">G</span>
+        <span>GATEPath</span>
+    </a>
+
+    <!-- Main Navigation -->
+    <nav class="nav-links" aria-label="Main navigation">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/syllabus}">Syllabus</a>
+        <a th:href="@{/study-material}">Study Material</a>
+        <a th:href="@{/pyqs}">PYQs</a>
+        <a th:href="@{/practice}">Practice</a>
+        <a th:href="@{/mock-tests}">Mock Tests</a>
+        <a th:href="@{/my-progress}">My Progress</a>
+        <a th:href="@{/profile}">Profile</a>
+    </nav>
+
+    <!-- User Actions -->
+    <div class="nav-actions">
+
+        <!-- Logged-out user -->
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}" class="login-link">
+                Log in
+            </a>
+
+            <a th:href="@{/register}" class="btn btn-small">
+                Get Started
+            </a>
+        </div>
+
+        <!-- Logged-in user -->
+        <div sec:authorize="isAuthenticated()">
+
+            <span sec:authentication="name"
+                  class="login-link"
+                  aria-label="Logged-in username">
+            </span>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  style="display: inline;">
+
+                <!-- CSRF protection -->
+                <input type="hidden"
+                       th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="btn btn-small">
+                    Log out
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</header>
+
+</body>
+</html>

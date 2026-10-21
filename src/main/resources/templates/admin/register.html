@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+          type="image/png"
+          th:href="@{/images/favicon.png(v=12)}">
+
+
+    <title>Create Account | GATEPath</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --navy: #0b1224;
+            --blue: #4568f5;
+            --text: #17213b;
+            --muted: #7b8499;
+            --border: #e5e9f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'DM Sans', sans-serif;
+            background: #f4f6fc;
+            color: var(--text);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* LEFT PANEL */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 42px 8%;
+            color: white;
+            background:
+                radial-gradient(ellipse at 15% 80%,
+                    rgba(69,104,245,.36), transparent 45%),
+                radial-gradient(ellipse at 90% 15%,
+                    rgba(83,119,255,.22), transparent 40%),
+                #0b1224;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 50%;
+            right: -170px;
+            top: 20%;
+            box-shadow:
+                0 0 0 45px rgba(255,255,255,.025),
+                0 0 0 90px rgba(255,255,255,.02);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            font-family: 'Manrope', sans-serif;
+            font-size: 23px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-mark {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #6b86ff, #3855e8);
+            box-shadow: 0 8px 24px rgba(69,104,245,.3);
+        }
+
+        .brand-mark span {
+            font-size: 24px;
+        }
+
+        .hero-content {
+            max-width: 500px;
+            position: relative;
+            z-index: 1;
+            margin: 50px 0;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #bdcaff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 2px;
+            background: #7d96ff;
+        }
+
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(35px, 4vw, 55px);
+            line-height: 1.15;
+            letter-spacing: -2px;
+            margin-bottom: 23px;
+        }
+
+        .hero h1 span {
+            color: #8da3ff;
+        }
+
+        .hero-description {
+            color: #aeb8d0;
+            font-size: 14px;
+            line-height: 1.9;
+            max-width: 410px;
+        }
+
+        .features {
+            display: grid;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #e2e8f7;
+            font-size: 13px;
+        }
+
+        .feature-icon {
+            display: grid;
+            place-items: center;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            color: #a9b9ff;
+            background: rgba(255,255,255,.08);
+        }
+
+        .hero-footer {
+            color: #818da9;
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* RIGHT PANEL */
+
+        .form-side {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px 7%;
+            background: white;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 410px;
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .welcome-label {
+            color: var(--blue);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            margin-bottom: 11px;
+        }
+
+        .register-card h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 33px;
+            line-height: 1.25;
+            letter-spacing: -1px;
+            margin-bottom: 9px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 23px;
+        }
+
+        .message {
+            padding: 11px 13px;
+            border-radius: 9px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: #b42318;
+            background: #fff0ef;
+            border: 1px solid #ffd7d3;
+        }
+
+        .success {
+            color: #137547;
+            background: #edfaf2;
+            border: 1px solid #c7f0d6;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #26314a;
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 47px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: #fbfcff;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text);
+            transition: border .2s, box-shadow .2s;
+        }
+
+        .input-wrap input::placeholder {
+            color: #a3aabd;
+        }
+
+        .input-wrap input:focus {
+            background: white;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(69,104,245,.10);
+        }
+
+        .password-input {
+            padding-right: 65px !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 13px;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: #63708a;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 19px 0 21px;
+            color: #68738a;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .terms input {
+            margin-top: 3px;
+            accent-color: var(--blue);
+            flex-shrink: 0;
+        }
+
+        .terms a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 49px;
+            border: 0;
+            border-radius: 10px;
+            color: white;
+            background: linear-gradient(110deg, #4c6af4, #3854df);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 9px 20px rgba(69,104,245,.22);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(69,104,245,.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 22px 0;
+            color: #9aa2b3;
+            font-size: 10px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: #e9ecf3;
+        }
+
+        .login-text {
+            text-align: center;
+            font-size: 12px;
+            color: #778097;
+        }
+
+        .login-text a {
+            color: var(--blue);
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .security-note {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 22px;
+            color: #9199aa;
+            font-size: 10px;
+        }
+
+        .security-note span {
+            color: #30976b;
+        }
+
+        @media (max-width: 850px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                display: none;
+            }
+
+            .form-side {
+                min-height: 100vh;
+                padding: 30px 22px;
+            }
+
+            .register-card {
+                max-width: 430px;
+            }
+
+            .mobile-brand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 35px;
+                font-family: 'Manrope', sans-serif;
+                font-size: 22px;
+                font-weight: 800;
+                color: var(--navy);
+                text-decoration: none;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .register-card h2 {
+                font-size: 29px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- LEFT BRANDING PANEL -->
+    <section class="hero">
+
+        <a class="brand" th:href="@{/}">
+            <span class="brand-mark"><span>G</span></span>
+            <span>GATEPath</span>
+        </a>
+
+        <div class="hero-content">
+
+            <div class="eyebrow">Your future starts here</div>
+
+            <h1>
+                Start your<br>
+                GATE journey.<br>
+                <span>Build your future.</span>
+            </h1>
+
+            <p class="hero-description">
+                Create your learning account and bring your
+                preparation resources together in one place.
+                Every focused step takes you closer to your goal.
+            </p>
+
+            <div class="features">
+
+                <div class="feature">
+                    <span class="feature-icon">✓</span>
+                    <span>Explore organized syllabus and study material</span>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">↗</span>
+                    <span>Practice with previous year questions</span>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">◎</span>
+                    <span>Keep track of your learning progress</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="hero-footer">
+            © 2026 GATEPath · Prepare with purpose.
+        </div>
+
+    </section>
+
+    <!-- REGISTRATION FORM -->
+    <main class="form-side">
+
+        <div class="register-card">
+
+            <a class="mobile-brand" th:href="@{/}">
+                <span class="brand-mark">G</span>
+                <span>GATEPath</span>
+            </a>
+
+            <div class="welcome-label">Create your account</div>
+
+            <h2>Join GATEPath</h2>
+
+            <p class="subtitle">
+                Set up your account and start preparing with a clear plan.
+            </p>
+
+            <!-- Backend messages -->
+            <div th:if="${error}" class="message error"
+                 th:text="${error}">
+                Something went wrong.
+            </div>
+
+            <div th:if="${success}" class="message success"
+                 th:text="${success}">
+                Registration successful.
+            </div>
+
+            <div th:if="${param.error}" class="message error">
+                Registration could not be completed.
+            </div>
+
+            <form id="registerForm"
+                  th:action="@{/register}"
+                  method="post">
+
+                <!-- CSRF protection for Spring Security -->
+                <input type="hidden"
+                       th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <div class="field">
+                    <label for="fullName">Full name</label>
+
+                    <div class="input-wrap">
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            minlength="2"
+                            maxlength="100"
+                            required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email address</label>
+
+                    <div class="input-wrap">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            maxlength="150"
+                            required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+
+                    <div class="input-wrap">
+                        <input
+                            class="password-input"
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a strong password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required>
+
+                        <button
+                            class="toggle-password"
+                            type="button"
+                            data-target="password">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="confirmPassword">Confirm password</label>
+
+                    <div class="input-wrap">
+                        <input
+                            class="password-input"
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Enter password again"
+                            autocomplete="new-password"
+                            minlength="8"
+                            required>
+
+                        <button
+                            class="toggle-password"
+                            type="button"
+                            data-target="confirmPassword">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <label class="terms">
+                    <input type="checkbox" id="terms" required>
+                    <span>
+                        I agree to the
+                        <a href="#" onclick="return false;">Terms of Use</a>
+                        and
+                        <a href="#" onclick="return false;">Privacy Policy</a>.
+                    </span>
+                </label>
+
+                <button class="submit-btn" type="submit">
+                    Create my account <span>→</span>
+                </button>
+
+            </form>
+
+            <div class="divider">ALREADY PART OF GATEPATH?</div>
+
+            <p class="login-text">
+                Already have an account?
+                <a th:href="@{/login}">Sign in</a>
+            </p>
+
+            <div class="security-note">
+                <span>●</span>
+                Your GATE preparation journey starts here
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    // Show or hide password
+    document.querySelectorAll(".toggle-password").forEach(button => {
+        button.addEventListener("click", function () {
+            const input = document.getElementById(this.dataset.target);
+            const isHidden = input.type === "password";
+
+            input.type = isHidden ? "text" : "password";
+            this.textContent = isHidden ? "Hide" : "Show";
+        });
+    });
+
+    // Client-side confirm-password validation
+    const registerForm = document.getElementById("registerForm");
+
+    registerForm.addEventListener("submit", function (event) {
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert("Passwords do not match. Please try again.");
+            document.getElementById("confirmPassword").focus();
+        }
+    });
+</script>
+
+</body>
+</html>

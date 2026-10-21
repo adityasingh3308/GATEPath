@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('My Progress', 'my-progress.css')}">
+    
+</head>
+
+<body>
+
+    <!-- Navbar -->
+     <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="progress-page">
+
+        <!-- Page Heading -->
+        <section class="progress-heading">
+            <div>
+                <span class="eyebrow">YOUR LEARNING JOURNEY</span>
+                <h1>My <span>Progress</span></h1>
+                <p>
+                    Every topic you complete brings you one step closer
+                    to your GATE goal.
+                </p>
+            </div>
+
+            <div class="goal-badge">
+                <span class="goal-icon">✦</span>
+                <div>
+                    <strong>Keep going!</strong>
+                    <small>Consistency builds success</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success and Error Messages -->
+        <div th:if="${successMessage}"
+             class="progress-alert success"
+             th:text="${successMessage}">
+        </div>
+
+        <div th:if="${errorMessage}"
+             class="progress-alert error"
+             th:text="${errorMessage}">
+        </div>
+
+        <!-- Welcome Banner -->
+        <section class="welcome-banner">
+            <div class="welcome-copy">
+                <span class="banner-label">
+                    YOUR PREPARATION OVERVIEW
+                </span>
+
+                <h2 th:text="|Keep it up, ${studentName}!|">
+                    Keep it up, Student!
+                </h2>
+
+                <p>
+                    Small steps every day lead to big achievements.
+                    Keep learning and tracking your progress.
+                </p>
+            </div>
+
+            <div class="banner-progress">
+                <div class="progress-ring"
+                     th:style="|--progress: ${overallPercentage}%|">
+
+                    <div class="ring-inner">
+                        <strong th:text="|${overallPercentage}%|">
+                            0%
+                        </strong>
+                        <span>COMPLETED</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Cards -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <div class="stat-icon purple">✓</div>
+                <div>
+                    <p>Topics Completed</p>
+                    <h3 th:text="${completedTopics}">0</h3>
+                    <span class="stat-note">
+                        Topics you've finished
+                    </span>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon blue">▤</div>
+                <div>
+                    <p>Total Topics</p>
+                    <h3 th:text="${totalTopics}">0</h3>
+                    <span class="stat-note">
+                        Available in your CS syllabus
+                    </span>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon orange">◷</div>
+                <div>
+                    <p>Topics Remaining</p>
+                    <h3 th:text="${remainingTopics}">0</h3>
+                    <span class="stat-note">
+                        Your next milestones
+                    </span>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- Subject Progress -->
+        <section class="subjects-section">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">SUBJECT BREAKDOWN</span>
+                    <h2>Your Syllabus Progress</h2>
+                    <p>
+                        Mark topics complete as you finish studying them.
+                    </p>
+                </div>
+
+                <span class="subject-count"
+                      th:text="|${#lists.size(subjectProgress)} Subjects|">
+                    0 Subjects
+                </span>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(subjectProgress)}"
+                 class="empty-state">
+
+                <div class="empty-icon">📚</div>
+
+                <h3>No subjects available yet</h3>
+
+                <p>
+                    Add subjects and topics to your CS syllabus
+                    to start tracking progress.
+                </p>
+
+                <a th:href="@{/syllabus}" class="btn-primary">
+                    Explore Syllabus
+                </a>
+            </div>
+
+            <!-- Subject Cards -->
+            <div class="subject-list"
+                 th:unless="${#lists.isEmpty(subjectProgress)}">
+
+                <article class="subject-card"
+                         th:each="item : ${subjectProgress}">
+
+                    <!-- Subject Header -->
+                    <div class="subject-top">
+
+                        <div class="subject-symbol">📘</div>
+
+                        <div class="subject-info">
+                            <h3 th:text="${item.subject.subjectName}">
+                                Subject Name
+                            </h3>
+
+                            <p th:text="${item.subject.description}">
+                                Subject description
+                            </p>
+                        </div>
+
+                        <div class="subject-percentage"
+                             th:text="|${item.percentage}%|">
+                            0%
+                        </div>
+
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="bar-track">
+                        <div class="bar-fill"
+                             th:style="|width: ${item.percentage}%|">
+                        </div>
+                    </div>
+
+                    <!-- Progress Details -->
+                    <div class="subject-meta">
+
+                        <span>
+                            <strong th:text="${item.completedCount}">
+                                0
+                            </strong>
+                            of
+                            <strong th:text="${item.totalCount}">
+                                0
+                            </strong>
+                            topics completed
+                        </span>
+
+                        <span th:text="|${item.totalCount - item.completedCount} left|">
+                            0 left
+                        </span>
+
+                    </div>
+
+                    <!-- Topic List -->
+                    <div class="topic-list">
+
+                        <div class="topic-row"
+                             th:each="topicItem : ${item.topics}">
+
+                            <div class="topic-details">
+
+                                <span class="topic-check"
+                                      th:classappend="${topicItem.completed} ? ' checked' : ''"
+                                      th:text="${topicItem.completed} ? '✓' : '○'">
+                                    ○
+                                </span>
+
+                                <div>
+                                    <strong th:text="${topicItem.topic.topicName}">
+                                        Topic name
+                                    </strong>
+
+                                    <small th:if="${topicItem.completed}">
+                                        Completed
+                                    </small>
+
+                                    <small th:unless="${topicItem.completed}">
+                                        Not completed yet
+                                    </small>
+                                </div>
+
+                            </div>
+
+                            <!-- Mark Complete / Undo -->
+                            <form th:action="@{/my-progress/topic/{id}/toggle(id=${topicItem.topic.id})}"
+                                  method="post"
+                                  class="topic-action">
+
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}">
+
+                                <button type="submit"
+                                        class="topic-button"
+                                        th:classappend="${topicItem.completed} ? ' undo' : ' complete'"
+                                        th:text="${topicItem.completed} ? 'Undo' : 'Mark Complete'">
+                                    Mark Complete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Subject Footer -->
+                    <div class="subject-footer">
+                        <a th:href="@{/syllabus/{id}(id=${item.subject.id})}">
+                            Review subject <span>→</span>
+                        </a>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- Motivation Card -->
+        <section class="motivation-card">
+
+            <div class="motivation-icon">✦</div>
+
+            <div>
+                <h3>Progress over perfection</h3>
+                <p>
+                    You don't have to finish everything today.
+                    Complete one topic at a time, stay consistent,
+                    and trust your preparation.
+                </p>
+            </div>
+
+            <a th:href="@{/syllabus}" class="motivation-link">
+                Study now →
+            </a>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+    
+
+</body>
+</html>

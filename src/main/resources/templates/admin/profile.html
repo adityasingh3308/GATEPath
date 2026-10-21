@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('My Profile | GATEPath', 'profile.css')}">
+    <title>My Profile | GATEPath</title>
+</head>
+
+<body class="profile-page-body">
+
+    <!-- Common Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="profile-page">
+
+        <header class="profile-heading">
+            <h1>My Profile</h1>
+            <p>Manage your personal details and GATE preparation goals.</p>
+        </header>
+
+        <!-- Success and Error Messages -->
+        <div th:if="${successMessage}"
+             class="profile-alert success"
+             th:text="${successMessage}"></div>
+
+        <div th:if="${errorMessage}"
+             class="profile-alert error"
+             th:text="${errorMessage}"></div>
+
+        <div class="profile-layout">
+
+            <!-- Profile Summary -->
+            <aside class="profile-card" th:if="${profile != null}">
+
+                <div class="profile-avatar"
+                     th:text="${#strings.isEmpty(profile.fullName) ? 'G' : #strings.substring(profile.fullName, 0, 1).toUpperCase()}">G</div>
+
+                <h2 th:text="${profile.fullName}">Student Name</h2>
+
+                <p th:text="${profile.email}">student@example.com</p>
+
+                <span class="profile-tag">GATE Aspirant</span>
+
+                <a class="profile-button primary profile-edit-link"
+                   th:if="${!editMode}"
+                   th:href="@{/profile/edit}">
+                    Edit Profile
+                </a>
+
+            </aside>
+
+            <!-- Profile Details -->
+            <section class="details-card">
+
+                <h2 th:text="${editMode} ? 'Edit Personal Information' : 'Personal Information'">
+                    Personal Information
+                </h2>
+
+                <p class="card-description">
+                    View and manage your personal and academic details.
+                </p>
+
+                <!-- NORMAL VIEW MODE -->
+                <div th:if="${!editMode}" class="profile-details">
+
+                    <div class="detail-item">
+                        <span>Full Name</span>
+                        <strong th:text="${profile.fullName} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Email Address</span>
+                        <strong th:text="${profile.email} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Phone Number</span>
+                        <strong th:text="${profile.phone} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>College / University</span>
+                        <strong th:text="${profile.college} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Degree</span>
+                        <strong th:text="${profile.degree} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Branch / Subject</span>
+                        <strong th:text="${profile.branch} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Graduation Year</span>
+                        <strong th:text="${profile.graduationYear} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Target GATE Exam Year</span>
+                        <strong th:text="${profile.targetYear} ?: 'Not added'">Not added</strong>
+                    </div>
+
+                    <div class="detail-item full-width">
+                        <span>Target GATE Papers</span>
+
+                        <div class="paper-tags"
+                             th:if="${profile.gatePapers != null and !#sets.isEmpty(profile.gatePapers)}">
+
+                            <span class="paper-tag"
+                                  th:each="paper : ${profile.gatePapers}"
+                                  th:text="${paper}">CS</span>
+                        </div>
+
+                        <strong th:if="${profile.gatePapers == null or #sets.isEmpty(profile.gatePapers)}">
+                            Not selected
+                        </strong>
+                    </div>
+
+                </div>
+
+                <!-- EDIT MODE -->
+                <form th:if="${editMode}"
+                      th:action="@{/profile/update}"
+                      th:object="${profile}"
+                      method="post"
+                      class="profile-form">
+
+                    <input type="hidden"
+                           th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text"
+                               id="fullName"
+                               th:field="*{fullName}"
+                               maxlength="100"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel"
+                               id="phone"
+                               th:field="*{phone}"
+                               maxlength="15"
+                               placeholder="Enter phone number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="college">College / University</label>
+                        <input type="text"
+                               id="college"
+                               th:field="*{college}"
+                               maxlength="150"
+                               placeholder="Enter college name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="degree">Degree</label>
+                        <select id="degree" th:field="*{degree}">
+                            <option value="">Select degree</option>
+                            <option value="B.Tech">B.Tech</option>
+                            <option value="B.E.">B.E.</option>
+                            <option value="B.Sc.">B.Sc.</option>
+                            <option value="M.Tech">M.Tech</option>
+                            <option value="M.Sc.">M.Sc.</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="branch">Branch / Subject</label>
+                        <select id="branch" th:field="*{branch}">
+                            <option value="">Select branch</option>
+                            <option value="CSE">Computer Science (CSE)</option>
+                            <option value="DA">Data Science &amp; AI (DA)</option>
+                            <option value="ECE">Electronics (ECE)</option>
+                            <option value="EE">Electrical (EE)</option>
+                            <option value="ME">Mechanical (ME)</option>
+                            <option value="CE">Civil (CE)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="graduationYear">Graduation Year</label>
+                        <select id="graduationYear" th:field="*{graduationYear}">
+                            <option value="">Select year</option>
+                            <option th:each="year : ${#numbers.sequence(currentYear, currentYear + 7)}"
+                                    th:value="${year}"
+                                    th:text="${year}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetYear">Target GATE Exam Year</label>
+                        <select id="targetYear" th:field="*{targetYear}">
+                            <option value="">Select exam year</option>
+                            <option th:each="year : ${#numbers.sequence(currentYear, currentYear + 5)}"
+                                    th:value="${year}"
+                                    th:text="${year}"></option>
+                        </select>
+                    </div>
+
+                    <fieldset class="form-group full-width paper-selection">
+                        <legend>Target GATE Papers</legend>
+                        <p>Select one or more papers.</p>
+
+                        <div class="paper-options">
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="CS"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('CS')}">
+                                <span>CS — Computer Science</span>
+                            </label>
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="DA"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('DA')}">
+                                <span>DA — Data Science &amp; AI</span>
+                            </label>
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="EC"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('EC')}">
+                                <span>EC — Electronics</span>
+                            </label>
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="EE"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('EE')}">
+                                <span>EE — Electrical</span>
+                            </label>
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="ME"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('ME')}">
+                                <span>ME — Mechanical</span>
+                            </label>
+
+                            <label class="paper-option">
+                                <input type="checkbox"
+                                       name="gatePapers"
+                                       value="CE"
+                                       th:checked="${profile.gatePapers != null and profile.gatePapers.contains('CE')}">
+                                <span>CE — Civil</span>
+                            </label>
+
+                        </div>
+                    </fieldset>
+
+                    <div class="profile-actions">
+                        <a th:href="@{/profile}"
+                           class="profile-button secondary">Cancel</a>
+
+                        <button type="submit"
+                                class="profile-button primary">Save Changes</button>
+                    </div>
+
+                </form>
+
+                <div class="profile-note">
+                    <strong>GATEPath Profile:</strong>
+                    Your registered email is kept unchanged. Your profile details
+                    are saved to your account when you click Save Changes.
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Common Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Common Scripts -->
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

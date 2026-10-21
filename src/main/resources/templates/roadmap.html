@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head
+    th:replace="~{fragments/head :: head('GATEPath | Roadmap', 'roadmap.css')}"
+  >
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="roadmap-page">
+      <!-- Page Heading -->
+      <section class="roadmap-heading">
+        <div class="roadmap-heading-copy">
+          <span class="roadmap-eyebrow">YOUR PREPARATION PLAN</span>
+          <h1>Your GATE <span>Roadmap</span></h1>
+          <p>
+            Follow a structured preparation journey, from understanding the exam
+            to becoming ready for the actual test.
+          </p>
+        </div>
+
+        <div class="roadmap-heading-icon" aria-hidden="true">
+          <i class="bi bi-signpost-split"></i>
+        </div>
+      </section>
+
+      <!-- Paper Selector -->
+      <section class="roadmap-paper-panel">
+        <div class="roadmap-paper-info">
+          <span class="roadmap-label">YOUR SELECTED PAPER</span>
+          <h2 th:text="${paperName}">
+            Computer Science and Information Technology
+          </h2>
+          <p>Choose a paper to view its preparation roadmap.</p>
+        </div>
+
+        <form th:action="@{/roadmap}" method="get" class="roadmap-paper-form">
+          <label for="paper">GATE Paper</label>
+
+          <select id="paper" name="paper">
+            <option
+              th:each="paperOption : ${paperOptions}"
+              th:value="${paperOption.code}"
+              th:text="${paperOption.name}"
+              th:selected="${paperOption.code == selectedPaper}"
+              th:disabled="${!paperOption.available}"
+            >
+              Computer Science and Information Technology
+            </option>
+          </select>
+
+          <button type="submit" class="roadmap-primary-btn">
+            View Roadmap
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </form>
+      </section>
+
+      <!-- Journey Introduction -->
+      <section class="roadmap-intro">
+        <div class="roadmap-intro-icon">
+          <i class="bi bi-compass"></i>
+        </div>
+
+        <div class="roadmap-intro-copy">
+          <span class="roadmap-label">YOUR GAME PLAN</span>
+          <h2>One step at a time</h2>
+          <p>
+            Follow the phases in sequence. Complete the relevant subjects,
+            practise questions, revisit weak areas and use mock tests to prepare
+            for the exam.
+          </p>
+        </div>
+
+        <a th:href="@{/syllabus}" class="roadmap-primary-btn">
+          View Syllabus
+          <i class="bi bi-arrow-up-right"></i>
+        </a>
+      </section>
+
+      <!-- Preparation Phases -->
+      <section class="roadmap-section">
+        <div class="roadmap-section-heading">
+          <div>
+            <span class="roadmap-eyebrow">THE JOURNEY</span>
+            <h2>Preparation Phases</h2>
+            <p>
+              Each phase contains subject guidance and milestones to help you
+              know what to do next.
+            </p>
+          </div>
+
+          <span class="roadmap-phase-count">
+            <i class="bi bi-signpost"></i>
+            <span th:text="|${#lists.size(phases)} Phases|">6 Phases</span>
+          </span>
+        </div>
+
+        <div class="roadmap-timeline">
+          <article class="roadmap-card" th:each="phase, phaseStat : ${phases}">
+            <div class="roadmap-step">
+              <span th:text="${phase.number}">01</span>
+            </div>
+
+            <div class="roadmap-card-body">
+              <div class="roadmap-card-top">
+                <div>
+                  <span
+                    class="roadmap-phase-label"
+                    th:text="|PHASE ${phase.number}|"
+                  >
+                    PHASE 01
+                  </span>
+
+                  <h3 th:text="${phase.title}">Preparation Phase</h3>
+                </div>
+
+                <span
+                  class="roadmap-status"
+                  th:classappend="${phaseStat.first} ? ' status-start' : (${phaseStat.last} ? ' status-final' : ' status-upcoming')"
+                  th:text="${phaseStat.first} ? 'Start here' : (${phaseStat.last} ? 'Final phase' : 'Upcoming')"
+                >
+                  Upcoming
+                </span>
+              </div>
+
+              <p class="roadmap-description" th:text="${phase.description}">
+                Phase description.
+              </p>
+
+              <!-- Subject Order -->
+              <div
+                class="roadmap-subjects"
+                th:if="${!#lists.isEmpty(phase.subjects)}"
+              >
+                <h4>
+                  <i class="bi bi-journal-bookmark"></i>
+                  Subjects in this phase
+                </h4>
+
+                <div class="roadmap-subject-list">
+                  <div
+                    class="roadmap-subject-item"
+                    th:each="subject : ${phase.subjects}"
+                  >
+                    <span
+                      class="roadmap-subject-number"
+                      th:text="${subject.order}"
+                    >
+                      1
+                    </span>
+
+                    <div>
+                      <strong th:text="${subject.name}"> Subject name </strong>
+                      <small th:text="${subject.focus}"> Subject focus </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Milestones -->
+              <div class="roadmap-milestones">
+                <h4>
+                  <i class="bi bi-flag"></i>
+                  Milestones to complete
+                </h4>
+
+                <ul class="roadmap-checklist">
+                  <li th:each="milestone : ${phase.milestones}">
+                    <i class="bi bi-check2-circle"></i>
+                    <span th:text="${milestone}"> Complete the milestone </span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Action -->
+              <div class="roadmap-card-footer">
+                <span>
+                  <i class="bi bi-bullseye"></i>
+                  <span th:text="${phase.goal}">Phase goal</span>
+                </span>
+
+                <a th:href="${phase.actionUrl}">
+                  <span th:text="${phase.actionLabel}">Continue</span>
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Closing Note -->
+      <section class="roadmap-closing">
+        <div class="roadmap-closing-icon">
+          <i class="bi bi-lightbulb"></i>
+        </div>
+
+        <div>
+          <h3>Follow the plan. Adapt your pace.</h3>
+          <p>
+            This roadmap guides your preparation. Use the Syllabus, PYQs,
+            Practice and Mock Tests sections to carry out each step and
+            strengthen your readiness.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+  </body>
+</html>

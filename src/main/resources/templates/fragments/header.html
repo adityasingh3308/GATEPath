@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<header th:fragment="header" class="app-header">
+
+    <!-- Brand -->
+    <a th:href="@{/}" class="header-brand" aria-label="GATEPath Home">
+        <span class="header-brand-icon">G</span>
+        <span class="header-brand-name">GATEPath</span>
+    </a>
+
+    
+<!-- Common Navigation -->
+<nav class="header-nav" aria-label="Main navigation">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/syllabus}">Syllabus</a>
+    <a th:href="@{/roadmap}">Roadmap</a>
+    <a th:href="@{/practice}">Practice</a>
+    <a th:href="@{/mock-tests}">Mock Tests</a>
+    <a th:href="@{/my-progress}">My Progress</a>
+</nav>
+
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+
+        <!-- Notifications -->
+        <div class="header-action-item">
+            <button type="button"
+                    class="header-icon-button"
+                    id="notifications-toggle"
+                    aria-label="Notifications"
+                    aria-controls="notifications-menu"
+                    aria-expanded="false">
+                <i class="bi bi-bell" aria-hidden="true"></i>
+                <span class="header-notification-badge"
+                      aria-label="0 notifications">0</span>
+            </button>
+
+            <div class="header-dropdown"
+                 id="notifications-menu"
+                 hidden>
+                <div class="header-dropdown-heading">Notifications</div>
+                <div class="header-dropdown-content">
+                    <i class="bi bi-bell-slash" aria-hidden="true"></i>
+                    <p>You're all caught up!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theme Selector -->
+        <div class="header-action-item">
+            <button type="button"
+                    class="header-icon-button"
+                    id="theme-toggle"
+                    aria-label="Change appearance"
+                    aria-controls="theme-menu"
+                    aria-expanded="false">
+                <i class="bi bi-sun-fill"
+                   id="theme-current-icon"
+                   aria-hidden="true"></i>
+            </button>
+
+            <div class="header-dropdown header-theme-menu"
+                 id="theme-menu"
+                 hidden>
+                <div class="header-dropdown-heading">Appearance</div>
+
+                <button type="button"
+                        class="header-dropdown-option"
+                        data-theme-choice="light">
+                    <i class="bi bi-sun-fill" aria-hidden="true"></i>
+                    <span>Light</span>
+                    <i class="bi bi-check2 theme-option-check"
+                       aria-hidden="true"></i>
+                </button>
+
+                <button type="button"
+                        class="header-dropdown-option"
+                        data-theme-choice="dark">
+                    <i class="bi bi-moon-fill" aria-hidden="true"></i>
+                    <span>Dark</span>
+                    <i class="bi bi-check2 theme-option-check"
+                       aria-hidden="true"></i>
+                </button>
+
+                <button type="button"
+                        class="header-dropdown-option"
+                        data-theme-choice="system">
+                    <i class="bi bi-circle-half" aria-hidden="true"></i>
+                    <span>System</span>
+                    <i class="bi bi-check2 theme-option-check"
+                       aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Fullscreen -->
+        <button type="button"
+                class="header-icon-button"
+                id="fullscreen-toggle"
+                aria-label="Enter fullscreen">
+            <i class="bi bi-arrows-fullscreen"
+               id="fullscreen-icon"
+               aria-hidden="true"></i>
+        </button>
+
+        <!-- Logged-in User -->
+        <div class="header-action-item header-account"
+             sec:authorize="isAuthenticated()">
+
+            <button type="button"
+                    class="header-account-toggle"
+                    id="account-toggle"
+                    aria-label="Account menu"
+                    aria-controls="account-menu"
+                    aria-expanded="false">
+                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                <span class="header-user-name"
+                      sec:authentication="name">Student</span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+
+            <div class="header-dropdown header-account-menu"
+                 id="account-menu"
+                 hidden>
+                <div class="header-account-info">
+                    <span class="header-account-label">Signed in as</span>
+                    <strong sec:authentication="name">Student</strong>
+                </div>
+
+                <a th:href="@{/profile}"
+                   class="header-dropdown-option">
+                    <i class="bi bi-person" aria-hidden="true"></i>
+                    <span>Profile</span>
+                </a>
+
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden"
+                           th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <button type="submit"
+                            class="header-dropdown-option header-logout-option">
+                        <i class="bi bi-box-arrow-right"
+                           aria-hidden="true"></i>
+                        <span>Log out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Logged-out User -->
+        <div class="header-guest"
+             sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}">Log in</a>
+            <a th:href="@{/register}"
+               class="header-register-button">Get Started</a>
+        </div>
+
+    </div>
+
+</header>
+
+</body>
+</html>

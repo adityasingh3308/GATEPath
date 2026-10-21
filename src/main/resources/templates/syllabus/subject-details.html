@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(
+    'GATEPath | Subject Details',
+    'subject-details.css'
+)}"></head>
+
+<body>
+
+    <!-- Common GATEPath Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="subject-details-page">
+
+        <main class="subject-details-container">
+
+           
+
+            <!-- Subject Hero -->
+            <section class="subject-detail-hero">
+
+                <a class="subject-back-link" th:href="@{/syllabus}">
+                    <span aria-hidden="true">←</span>
+                    Back to all subjects
+                </a>
+
+                <div class="subject-detail-badge">
+                    GATE COMPUTER SCIENCE
+                </div>
+
+                <h1 th:text="${subject.subjectName}">
+                    Engineering Mathematics
+                </h1>
+
+                <p th:if="${subject.description != null
+                            and !#strings.isEmpty(subject.description)}"
+                   th:text="${subject.description}">
+                    Subject description will appear here.
+                </p>
+
+                <p th:if="${subject.description == null
+                            or #strings.isEmpty(subject.description)}">
+                    Explore important concepts, strengthen your fundamentals
+                    and prepare step by step for GATE Computer Science.
+                </p>
+
+                <div class="subject-detail-meta">
+                    <span>
+                        <strong th:text="${#lists.size(topics)}">0</strong>
+                        Topics
+                    </span>
+
+                    <span aria-hidden="true">•</span>
+
+                    <span>Structured Learning</span>
+                </div>
+
+            </section>
+
+            <!-- Topics Section -->
+            <section class="subject-topics-section">
+
+                <div class="subject-topics-heading">
+                    <div>
+                        <div class="subject-section-eyebrow">
+                            YOUR LEARNING PATH
+                        </div>
+
+                        <h2>Topics to Cover</h2>
+
+                        <p>
+                            Follow the topic sequence and build your concepts
+                            one step at a time.
+                        </p>
+                    </div>
+
+                    <span class="subject-topic-count"
+                          th:text="${#lists.size(topics)} + ' Topics'">
+                        0 Topics
+                    </span>
+                </div>
+
+                <!-- Topics available -->
+                <div class="subject-topic-list"
+                     th:if="${not #lists.isEmpty(topics)}">
+
+                    <article class="subject-topic-card"
+                             th:each="topic, status : ${topics}">
+
+                        <div class="subject-topic-number"
+                             th:text="${#numbers.formatInteger(status.count, 2)}">
+                            01
+                        </div>
+
+                        <div class="subject-topic-content">
+
+                            <h3 th:text="${topic.topicName}">
+                                Topic Name
+                            </h3>
+
+                            <p th:if="${topic.description != null
+                                        and !#strings.isEmpty(topic.description)}"
+                               th:text="${topic.description}">
+                                Topic description
+                            </p>
+
+                            <p th:if="${topic.description == null
+                                        or #strings.isEmpty(topic.description)}"
+                               class="subject-topic-no-description">
+                                Start learning this topic as part of your
+                                GATE preparation.
+                            </p>
+
+                        </div>
+
+                        <div class="subject-topic-status">
+                            <span class="topic-status-dot"
+                                  aria-hidden="true"></span>
+                            <span>To Study</span>
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- No topics available -->
+                <div class="subject-empty-state"
+                     th:if="${#lists.isEmpty(topics)}">
+
+                    <div class="subject-empty-icon" aria-hidden="true">
+                        <span>▤</span>
+                    </div>
+
+                    <h3>Topics coming soon</h3>
+
+                    <p>
+                        Topics for this subject have not been added yet.
+                        They will appear here once they are available.
+                    </p>
+
+                    <a class="subject-empty-back-link"
+                       th:href="@{/syllabus}">
+                        <span aria-hidden="true">←</span>
+                        Browse all subjects
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Common GATEPath Footer -->
+   <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Common JavaScript -->
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

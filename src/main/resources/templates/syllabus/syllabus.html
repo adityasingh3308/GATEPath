@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(
+    'GATEPath | Syllabus',
+    'syllabus.css'
+)}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+<div class="syllabus-page">
+
+    <main class="syllabus-container">
+
+    
+
+        <!-- Hero -->
+        <section class="syllabus-hero">
+            <div class="syllabus-hero-content">
+
+                <div class="syllabus-eyebrow">
+                    <span>✦</span> YOUR GATE PREPARATION STARTS HERE
+                </div>
+
+                <h1>
+                    Master Your
+                    <span>GATE CS Syllabus.</span>
+                </h1>
+
+                <p>
+                    One subject at a time. One concept at a time.
+                    Follow a structured learning path and prepare
+                    confidently for your GATE examination.
+                </p>
+
+                <a class="syllabus-hero-button" href="#subjects">
+                    Explore Subjects <span>→</span>
+                </a>
+
+            </div>
+
+            <div class="syllabus-hero-decoration" aria-hidden="true">
+                <div class="syllabus-orbit syllabus-orbit-one"></div>
+                <div class="syllabus-orbit syllabus-orbit-two"></div>
+                <div class="syllabus-orbit syllabus-orbit-three"></div>
+                <div class="syllabus-orbit-center">GATE<br>CS</div>
+                <span class="syllabus-float-icon float-icon-one">∑</span>
+                <span class="syllabus-float-icon float-icon-two">{ }</span>
+                <span class="syllabus-float-icon float-icon-three">⌘</span>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="syllabus-stats">
+
+            <div class="syllabus-stat-card">
+                <div class="syllabus-stat-icon">▤</div>
+                <div>
+                    <div class="syllabus-stat-label">Total Subjects</div>
+                    <div class="syllabus-stat-value"
+                         th:text="${#lists.size(subjects)}">11</div>
+                </div>
+            </div>
+
+            <div class="syllabus-stat-card">
+                <div class="syllabus-stat-icon">◈</div>
+                <div>
+                    <div class="syllabus-stat-label">Exam Category</div>
+                    <div class="syllabus-stat-value">GATE CS</div>
+                </div>
+            </div>
+
+            <div class="syllabus-stat-card">
+                <div class="syllabus-stat-icon">↗</div>
+                <div>
+                    <div class="syllabus-stat-label">Study Approach</div>
+                    <div class="syllabus-stat-value">Step by Step</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Subjects -->
+        <section id="subjects" class="syllabus-subjects-section">
+
+            <div class="syllabus-section-header">
+                <div>
+                    <div class="syllabus-section-eyebrow">
+                        YOUR LEARNING JOURNEY
+                    </div>
+                    <h2>Explore Your Subjects</h2>
+                    <p>Find a subject and start building your concepts.</p>
+                </div>
+
+                <div class="syllabus-subject-count">
+                    <span id="visibleSubjectCount"
+                          th:text="${#lists.size(subjects)}">11</span>
+                    Subjects
+                </div>
+            </div>
+
+            <!-- Search and filter -->
+            <div class="syllabus-toolbar">
+
+                <div class="syllabus-search-box">
+                    <span class="syllabus-search-icon">⌕</span>
+                    <input
+                        type="search"
+                        id="subjectSearch"
+                        placeholder="Search subjects..."
+                        aria-label="Search subjects">
+                    <button type="button"
+                            id="clearSearch"
+                            class="syllabus-clear-search"
+                            aria-label="Clear search"
+                            hidden>×</button>
+                </div>
+
+                <select id="subjectFilter"
+                        class="syllabus-filter"
+                        aria-label="Filter subjects">
+
+                    <option value="all">All Subjects</option>
+                    <option value="math">Mathematics</option>
+                    <option value="core">Core CS</option>
+                    <option value="aptitude">Aptitude</option>
+
+                </select>
+
+            </div>
+
+            <!-- Subject cards -->
+            <div class="syllabus-subject-grid"
+                 id="subjectGrid"
+                 th:if="${not #lists.isEmpty(subjects)}">
+
+                <article class="syllabus-subject-card"
+                         th:each="subject, status : ${subjects}"
+                         th:attr="data-name=${subject.subjectName},
+                                  data-category=${subject.subjectName == 'Engineering Mathematics' ? 'math' : (subject.subjectName == 'General Aptitude' ? 'aptitude' : 'core')}">
+
+                    <div class="syllabus-card-top">
+
+                        <div class="syllabus-subject-icon"
+                             aria-hidden="true"
+                             th:switch="${subject.subjectName}">
+
+                            <span th:case="'Engineering Mathematics'">∑</span>
+                            <span th:case="'Digital Logic'">◈</span>
+                            <span th:case="'Computer Organization and Architecture'">▦</span>
+                            <span th:case="'Programming and Data Structures'">{ }</span>
+                            <span th:case="'Algorithms'">⟳</span>
+                            <span th:case="'Theory of Computation'">∞</span>
+                            <span th:case="'Compiler Design'">⌨</span>
+                            <span th:case="'Operating Systems'">⚙</span>
+                            <span th:case="'Databases'">▤</span>
+                            <span th:case="'Computer Networks'">⇄</span>
+                            <span th:case="'General Aptitude'">✦</span>
+                            <span th:case="*">📘</span>
+
+                        </div>
+
+                        <span class="syllabus-subject-number"
+                              th:text="'SUBJECT ' + ${status.count}">
+                            SUBJECT 1
+                        </span>
+
+                    </div>
+
+                    <h3 th:text="${subject.subjectName}">
+                        Engineering Mathematics
+                    </h3>
+
+                    <p class="syllabus-card-description"
+                       th:text="${subject.description != null and !#strings.isEmpty(subject.description) ? subject.description : 'Explore concepts, understand fundamentals and prepare for GATE CS.'}">
+                        Explore the subject and prepare for GATE CS.
+                    </p>
+
+                    <div class="syllabus-card-footer">
+                        <span class="syllabus-card-label">
+                            <span class="syllabus-card-dot"></span>
+                            GATE CS
+                        </span>
+
+                        <a class="syllabus-card-link"
+                           th:href="@{/syllabus/{id}(id=${subject.id})}"
+                           th:attr="aria-label='Explore ' + ${subject.subjectName}">
+                            Explore <span class="syllabus-arrow">→</span>
+                        </a>
+                    </div>
+
+                </article>
+
+            </div>
+
+            <!-- No search results -->
+            <div id="noSearchResults"
+                 class="syllabus-empty-state"
+                 hidden>
+                <div class="syllabus-empty-icon">⌕</div>
+                <h3>No matching subjects</h3>
+                <p>Try a different search term or select another filter.</p>
+                <button type="button"
+                        id="resetSubjectSearch"
+                        class="syllabus-reset-button">
+                    Show all subjects
+                </button>
+            </div>
+
+            <!-- Database empty state -->
+            <div class="syllabus-empty-state"
+                 th:if="${#lists.isEmpty(subjects)}">
+                <h3>No subjects available</h3>
+                <p>Subjects will appear here once they have been added.</p>
+            </div>
+
+        </section>
+
+
+    </main>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("subjectSearch");
+        const filterSelect = document.getElementById("subjectFilter");
+        const clearButton = document.getElementById("clearSearch");
+        const resetButton = document.getElementById("resetSubjectSearch");
+        const countElement = document.getElementById("visibleSubjectCount");
+        const noResults = document.getElementById("noSearchResults");
+        const cards = Array.from(
+            document.querySelectorAll(".syllabus-subject-card")
+        );
+
+        function filterSubjects() {
+            const query = searchInput.value.trim().toLowerCase();
+            const category = filterSelect.value;
+            let visibleCount = 0;
+
+            cards.forEach(function (card) {
+                const name = (card.dataset.name || "").toLowerCase();
+                const cardCategory = card.dataset.category;
+
+                const matchesName = name.includes(query);
+                const matchesCategory =
+                    category === "all" || cardCategory === category;
+
+                const visible = matchesName && matchesCategory;
+
+                card.hidden = !visible;
+
+                if (visible) {
+                    visibleCount++;
+                }
+            });
+
+            countElement.textContent = visibleCount;
+            noResults.hidden = visibleCount !== 0;
+            clearButton.hidden = searchInput.value.length === 0;
+        }
+
+        searchInput.addEventListener("input", filterSubjects);
+        filterSelect.addEventListener("change", filterSubjects);
+
+        clearButton.addEventListener("click", function () {
+            searchInput.value = "";
+            filterSubjects();
+            searchInput.focus();
+        });
+
+        resetButton.addEventListener("click", function () {
+            searchInput.value = "";
+            filterSelect.value = "all";
+            filterSubjects();
+        });
+
+        filterSubjects();
+    });
+</script>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

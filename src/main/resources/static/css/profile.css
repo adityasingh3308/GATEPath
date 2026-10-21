@@ -1,0 +1,873 @@
+
+/* =========================================
+   GATEPath - Premium Profile Dashboard
+   ========================================= */
+
+.profile-page {
+    --profile-primary: #6956e8;
+    --profile-primary-dark: #5140c7;
+    --profile-text: #242344;
+    --profile-muted: #777790;
+    --profile-border: #eae8f5;
+
+    max-width: 1180px;
+    margin: 42px auto;
+    padding: 0 28px 60px;
+    color: var(--profile-text);
+    animation: profileFadeIn 0.45s ease both;
+}
+
+@keyframes profileFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- Page heading ---------- */
+
+.profile-heading {
+    position: relative;
+    margin-bottom: 30px;
+    padding: 8px 0 8px 18px;
+    border-left: 4px solid var(--profile-primary);
+}
+
+.profile-heading h1 {
+    margin: 0 0 9px;
+    color: var(--profile-text);
+    font-size: clamp(27px, 3vw, 35px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.profile-heading p {
+    margin: 0;
+    color: var(--profile-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ---------- Success and error messages ---------- */
+
+.profile-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 18px;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    animation: profileFadeIn 0.3s ease;
+}
+
+.profile-alert.success {
+    color: #176b43;
+    background: #eaf9f0;
+    border: 1px solid #c9efd8;
+}
+
+.profile-alert.success::before {
+    content: "✓";
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #d0f2de;
+}
+
+.profile-alert.error {
+    color: #a62d42;
+    background: #fff0f2;
+    border: 1px solid #f8d5dc;
+}
+
+/* ---------- Main layout ---------- */
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    align-items: start;
+    gap: 26px;
+}
+
+.profile-card,
+.details-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--profile-border);
+    border-radius: 20px;
+    box-shadow:
+        0 3px 8px rgba(48, 37, 100, 0.025),
+        0 15px 45px rgba(48, 37, 100, 0.055);
+    transition:
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.profile-card:hover,
+.details-card:hover {
+    box-shadow:
+        0 5px 12px rgba(48, 37, 100, 0.035),
+        0 20px 50px rgba(48, 37, 100, 0.08);
+}
+
+/* ---------- Left profile card ---------- */
+
+.profile-card {
+    position: relative;
+    padding: 0 25px 28px;
+    text-align: center;
+}
+
+.profile-card::before {
+    content: "";
+    display: block;
+    height: 112px;
+    margin: 0 -25px;
+    background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(255, 255, 255, 0.27) 0 38px,
+            transparent 39px
+        ),
+        radial-gradient(
+            circle at 15% 100%,
+            rgba(255, 255, 255, 0.13) 0 55px,
+            transparent 56px
+        ),
+        linear-gradient(135deg, #8170f6 0%, #6652df 50%, #4937ba 100%);
+}
+
+.profile-avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 108px;
+    height: 108px;
+    margin: -57px auto 18px;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #f0edff, #ded7ff);
+    box-shadow: 0 7px 20px rgba(74, 56, 180, 0.16);
+    color: #5945d1;
+    font-size: 39px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.profile-card h2 {
+    margin: 0 0 9px;
+    color: var(--profile-text);
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.profile-card p {
+    margin: 0 0 17px;
+    color: var(--profile-muted);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.profile-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px solid #e6e0ff;
+    border-radius: 30px;
+    background: #f3f0ff;
+    color: #624ed3;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.profile-tag::before {
+    content: "✦";
+    font-size: 13px;
+}
+
+.profile-edit-link {
+    width: 100%;
+    margin-top: 25px;
+}
+
+/* ---------- Right details card ---------- */
+
+.details-card {
+    padding: 30px;
+}
+
+.details-card > h2 {
+    margin: 0 0 8px;
+    color: var(--profile-text);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.45px;
+}
+
+.card-description {
+    margin: 0 0 27px;
+    color: var(--profile-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* ---------- View mode details ---------- */
+
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+    min-width: 0;
+    min-height: 82px;
+    padding: 17px 18px;
+    border: 1px solid #eeecf7;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #fff 0%, #fcfbff 100%);
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.detail-item:hover {
+    border-color: #d9d1ff;
+    background: #faf9ff;
+    transform: translateY(-2px);
+}
+
+.detail-item > span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #85839c;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.65px;
+    text-transform: uppercase;
+}
+
+.detail-item strong {
+    color: #302d4c;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ---------- GATE paper tags ---------- */
+
+.paper-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.paper-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    padding: 9px 14px;
+    border: 1px solid #e1dafe;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #f5f2ff, #ece7ff);
+    color: #5944cb;
+    font-size: 12px;
+    font-weight: 800;
+    transition: transform 0.2s ease;
+}
+
+.paper-tag:hover {
+    transform: translateY(-2px);
+}
+
+/* ---------- Edit form ---------- */
+
+.profile-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 18px;
+    margin-top: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+}
+
+.form-group > label,
+.paper-selection legend {
+    color: #45425f;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.15px;
+}
+
+.form-group input:not([type="checkbox"]),
+.form-group select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    min-height: 47px;
+    padding: 12px 14px;
+    border: 1px solid #e1dfed;
+    border-radius: 10px;
+    outline: none;
+    background-color: #fff;
+    color: #302d4c;
+    font-family: inherit;
+    font-size: 13px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #aaa8bd;
+}
+
+.form-group input:not([type="checkbox"]):hover,
+.form-group select:hover {
+    border-color: #c9c2ec;
+}
+
+.form-group input:not([type="checkbox"]):focus,
+.form-group select:focus {
+    border-color: #7967ee;
+    background-color: #fdfcff;
+    box-shadow: 0 0 0 4px rgba(105, 86, 232, 0.11);
+}
+
+.form-group input:disabled {
+    border-color: #eceaf3;
+    background: #f5f4f9;
+    color: #8b899f;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ---------- Multiple GATE paper selection ---------- */
+
+.paper-selection {
+    min-width: 0;
+    margin: 0;
+    padding: 20px;
+    border: 1px solid #e8e4f7;
+    border-radius: 14px;
+    background:
+        radial-gradient(
+            circle at 100% 0,
+            rgba(224, 217, 255, 0.28),
+            transparent 45%
+        ),
+        #fcfbff;
+}
+
+.paper-selection legend {
+    padding: 0 8px;
+    color: #40376f;
+    font-size: 13px;
+}
+
+.paper-selection p {
+    margin: 4px 0 17px;
+    color: var(--profile-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.paper-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.paper-option {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #e8e5f3;
+    border-radius: 11px;
+    background: #fff;
+    color: #494560;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.paper-option:hover {
+    border-color: #bdb0ff;
+    background: #f7f4ff;
+    transform: translateY(-1px);
+}
+
+.paper-option input {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: var(--profile-primary);
+    cursor: pointer;
+}
+
+.paper-option:has(input:checked) {
+    border-color: #a99aff;
+    background: #f2efff;
+    color: #4e3ab9;
+}
+
+/* ---------- Action buttons ---------- */
+
+.profile-actions {
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.profile-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 45px;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 750;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-button:hover {
+    transform: translateY(-2px);
+}
+
+.profile-button:active {
+    transform: translateY(0);
+}
+
+.profile-button.primary {
+    border-color: transparent;
+    background: linear-gradient(135deg, #7967f0, #5945d2);
+    box-shadow: 0 5px 13px rgba(92, 70, 205, 0.19);
+    color: #fff;
+}
+
+.profile-button.primary:hover {
+    background: linear-gradient(135deg, #6b57e4, #4935bc);
+    box-shadow: 0 8px 19px rgba(92, 70, 205, 0.26);
+}
+
+.profile-button.secondary {
+    border-color: #e6e3f0;
+    background: #fff;
+    color: #65617d;
+}
+
+.profile-button.secondary:hover {
+    border-color: #d0c9ef;
+    background: #f8f6ff;
+}
+
+/* ---------- Bottom note ---------- */
+
+.profile-note {
+    position: relative;
+    margin-top: 25px;
+    padding: 17px 19px 17px 45px;
+    border: 1px solid #e9e4ff;
+    border-radius: 12px;
+    background: linear-gradient(115deg, #f7f5ff, #fcfbff);
+    color: #77708f;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.profile-note::before {
+    content: "i";
+    position: absolute;
+    top: 17px;
+    left: 17px;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #e6e0ff;
+    color: #5944cb;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.profile-note strong {
+    color: #5944cb;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
+    .profile-layout {
+        grid-template-columns: 245px minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .details-card {
+        padding: 23px;
+    }
+
+    .profile-card {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .profile-details {
+        gap: 11px;
+    }
+
+    .detail-item {
+        padding: 14px;
+    }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 680px) {
+    .profile-page {
+        margin: 27px auto;
+        padding: 0 15px 38px;
+    }
+
+    .profile-heading {
+        margin-bottom: 23px;
+    }
+
+    .profile-heading h1 {
+        font-size: 28px;
+    }
+
+    .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .profile-card {
+        padding-bottom: 24px;
+    }
+
+    .profile-card::before {
+        height: 100px;
+    }
+
+    .profile-avatar {
+        width: 94px;
+        height: 94px;
+        margin-top: -51px;
+        font-size: 34px;
+    }
+
+    .profile-edit-link {
+        max-width: 260px;
+    }
+
+    .details-card {
+        padding: 21px 17px;
+        border-radius: 16px;
+    }
+
+    .details-card > h2 {
+        font-size: 20px;
+    }
+
+    .profile-details,
+    .profile-form,
+    .paper-options {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .detail-item.full-width,
+    .form-group.full-width,
+    .profile-actions {
+        grid-column: 1;
+    }
+
+    .profile-form {
+        gap: 19px;
+    }
+
+    .paper-selection {
+        padding: 15px;
+    }
+
+    .profile-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .profile-actions .profile-button {
+        padding: 12px 9px;
+    }
+
+    .profile-note {
+        padding: 15px 15px 15px 40px;
+    }
+
+    .profile-note::before {
+        left: 13px;
+        top: 16px;
+    }
+}
+
+/* ---------- Reduced motion accessibility ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .profile-page,
+    .profile-alert {
+        animation: none;
+    }
+
+    .profile-card,
+    .details-card,
+    .detail-item,
+    .paper-tag,
+    .paper-option,
+    .profile-button {
+        transition: none;
+    }
+}
+
+/* =========================================
+   PROFILE PAGE - DARK THEME
+   ========================================= */
+
+html[data-theme="dark"] .profile-page {
+    --profile-text: #f1effa;
+    --profile-muted: #aaa6c2;
+    --profile-border: #38344e;
+    color: var(--profile-text);
+}
+
+/* Profile and details cards */
+html[data-theme="dark"] .profile-page .profile-card,
+html[data-theme="dark"] .profile-page .details-card {
+    background: #201e30;
+    border-color: #38344e;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] .profile-page .profile-card h2,
+html[data-theme="dark"] .profile-page .details-card > h2 {
+    color: #f1effa;
+}
+
+html[data-theme="dark"] .profile-page .profile-card p,
+html[data-theme="dark"] .profile-page .card-description {
+    color: #aaa6c2;
+}
+
+/* Avatar */
+html[data-theme="dark"] .profile-page .profile-avatar {
+    background: linear-gradient(145deg, #393052, #2b2545);
+    border-color: #201e30;
+    color: #c4b8ff;
+}
+
+/* GATE Aspirant badge */
+html[data-theme="dark"] .profile-page .profile-tag {
+    background: #30294b;
+    border-color: #49406c;
+    color: #c5baff;
+}
+
+/* Personal details */
+html[data-theme="dark"] .profile-page .detail-item {
+    background: #28253a;
+    border-color: #3a3650;
+}
+
+html[data-theme="dark"] .profile-page .detail-item:hover {
+    background: #302b47;
+    border-color: #6554a5;
+}
+
+html[data-theme="dark"] .profile-page .detail-item > span {
+    color: #aaa6c2;
+}
+
+html[data-theme="dark"] .profile-page .detail-item strong {
+    color: #eeecfa;
+}
+
+/* Selected GATE papers in view mode */
+html[data-theme="dark"] .profile-page .paper-tag {
+    background: #342c57;
+    border-color: #51447f;
+    color: #c5baff;
+}
+
+/* Form labels and fieldset legend */
+html[data-theme="dark"] .profile-page .form-group > label,
+html[data-theme="dark"] .profile-page .paper-selection legend {
+    color: #e5e1f5;
+}
+
+/* Input fields and dropdowns */
+html[data-theme="dark"] .profile-page .form-group input:not([type="checkbox"]),
+html[data-theme="dark"] .profile-page .form-group select {
+    background-color: #28253a;
+    border-color: #49445f;
+    color: #f1effa;
+    color-scheme: dark;
+}
+
+html[data-theme="dark"] .profile-page .form-group input::placeholder {
+    color: #9993b2;
+}
+
+html[data-theme="dark"] .profile-page .form-group input:not([type="checkbox"]):focus,
+html[data-theme="dark"] .profile-page .form-group select:focus {
+    background-color: #302b47;
+    border-color: #9582fa;
+    box-shadow: 0 0 0 4px rgba(149, 130, 250, 0.15);
+}
+
+/* Disabled email field */
+html[data-theme="dark"] .profile-page .form-group input:disabled {
+    background: #211f30;
+    border-color: #39354d;
+    color: #9993b2;
+}
+
+/* GATE paper selection panel */
+html[data-theme="dark"] .profile-page .paper-selection {
+    background: #242136;
+    border-color: #403957;
+}
+
+html[data-theme="dark"] .profile-page .paper-selection p {
+    color: #aaa6c2;
+}
+
+html[data-theme="dark"] .profile-page .paper-option {
+    background: #28253a;
+    border-color: #403b56;
+    color: #e5e1f5;
+}
+
+html[data-theme="dark"] .profile-page .paper-option:hover {
+    background: #302b47;
+    border-color: #7665c5;
+}
+
+html[data-theme="dark"] .profile-page .paper-option:has(input:checked) {
+    background: #342c57;
+    border-color: #7968c9;
+    color: #d1c8ff;
+}
+
+html[data-theme="dark"] .profile-page .paper-option input {
+    accent-color: #9582fa;
+}
+
+/* Buttons */
+html[data-theme="dark"] .profile-page .profile-button.secondary {
+    background: #302d40;
+    border-color: #49455c;
+    color: #e1ddef;
+}
+
+html[data-theme="dark"] .profile-page .profile-button.secondary:hover {
+    background: #3b374f;
+    border-color: #625a80;
+}
+
+/* Profile information note */
+html[data-theme="dark"] .profile-page .profile-note {
+    background: linear-gradient(115deg, #292441, #242136);
+    border-color: #403957;
+    color: #b3aecb;
+}
+
+html[data-theme="dark"] .profile-page .profile-note strong {
+    color: #c5baff;
+}
+
+html[data-theme="dark"] .profile-page .profile-note::before {
+    background: #393052;
+    color: #c5baff;
+}
+
+/* Heading accent */
+html[data-theme="dark"] .profile-page .profile-heading {
+    border-left-color: #9582fa;
+}
+
+/* Success and error alerts remain readable */
+html[data-theme="dark"] .profile-page .profile-alert.success {
+    background: #173629;
+    border-color: #285940;
+    color: #a4edc1;
+}
+
+html[data-theme="dark"] .profile-page .profile-alert.success::before {
+    background: #24543b;
+}
+
+html[data-theme="dark"] .profile-page .profile-alert.error {
+    background: #3a202b;
+    border-color: #663342;
+    color: #ffb9c5;
+}

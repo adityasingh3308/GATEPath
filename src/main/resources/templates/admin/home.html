@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(
+    'GATEPath | GATE Exam Information & Preparation',
+    null
+)}"></head>
+
+<body>
+
+  <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <span class="eyebrow">GATE EXAM • INFORMATION • PREPARATION</span>
+
+                <h1>
+                    Your GATE journey<br>
+                    starts with <span>clarity.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Understand the GATE examination, explore eligibility and
+                    exam patterns, discover your paper and organize your
+                    preparation with GATEPath.
+                </p>
+
+                <div class="hero-actions">
+                    <a th:href="@{/syllabus}" class="btn">
+                        Explore Syllabus →
+                    </a>
+
+                    <a href="#about-gate" class="btn btn-outline">
+                        Know About GATE
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span class="note-dot"></span>
+                    Understand the exam before you start preparing.
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="visual-glow"></div>
+
+                <div class="study-card">
+
+                    <span class="muted-label">YOUR GATE GUIDE</span>
+
+                    <h3>Everything starts with a plan.</h3>
+
+                    <p class="hero-description">
+                        Get familiar with the examination and make informed
+                        preparation decisions.
+                    </p>
+
+                    <div class="mini-list">
+
+                        <a href="#about-gate" class="mini-item">
+                            <span class="mini-icon purple">01</span>
+                            <div>
+                                <strong>Understand GATE</strong>
+                                <small>Purpose and opportunities</small>
+                            </div>
+                            <span class="arrow">↗</span>
+                        </a>
+
+                        <a href="#eligibility" class="mini-item">
+                            <span class="mini-icon blue">02</span>
+                            <div>
+                                <strong>Check Eligibility</strong>
+                                <small>Qualification requirements</small>
+                            </div>
+                            <span class="arrow">↗</span>
+                        </a>
+
+                        <a href="#exam-pattern" class="mini-item">
+                            <span class="mini-icon orange">03</span>
+                            <div>
+                                <strong>Know the Exam Pattern</strong>
+                                <small>Sections, marks and duration</small>
+                            </div>
+                            <span class="arrow">↗</span>
+                        </a>
+
+                    </div>
+
+                </div>
+
+               
+
+            </div>
+
+        </section>
+
+
+        <!-- About GATE -->
+        <section class="resources info-section" id="about-gate">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">GETTING STARTED</span>
+                    <h2>What is the GATE examination?</h2>
+                </div>
+            </div>
+
+            <div class="info-content">
+
+                <p>
+                    The Graduate Aptitude Test in Engineering (GATE) is a
+                    national-level examination that primarily evaluates
+                    candidates' understanding of undergraduate-level subjects
+                    in engineering, technology, science, architecture,
+                    humanities and related disciplines.
+                </p>
+
+                <p>
+                    GATE scores are used by participating institutions for
+                    admission to eligible postgraduate programmes. Some
+                    organisations also use GATE scores as part of their
+                    recruitment processes, subject to their own requirements.
+                </p>
+
+                <p>
+                    The examination is conducted jointly by the Indian
+                    Institute of Science (IISc) and the Indian Institutes of
+                    Technology (IITs), on behalf of the National Coordination
+                    Board (NCB)-GATE, Department of Higher Education,
+                    Ministry of Education, Government of India.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Why GATE -->
+        <section class="resources" id="benefits">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">WHY GATE MATTERS</span>
+                    <h2>Opportunities through GATE</h2>
+                </div>
+
+                <p>
+                    A GATE score may open different academic and career
+                    opportunities, depending on the programme and institution.
+                </p>
+            </div>
+
+            <div class="resource-grid">
+
+                <article class="resource-card">
+                    <div class="resource-icon purple">01</div>
+                    <h3>Higher Education</h3>
+                    <p>
+                        Apply to eligible postgraduate programmes such as
+                        M.Tech and other relevant programmes at participating
+                        institutions.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon blue">02</div>
+                    <h3>Research Opportunities</h3>
+                    <p>
+                        Explore eligible research and higher-study pathways
+                        offered by institutions according to their admission
+                        criteria.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon orange">03</div>
+                    <h3>Recruitment Opportunities</h3>
+                    <p>
+                        Some public-sector organisations and other employers
+                        may consider GATE scores for recruitment when
+                        specified in their notifications.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon green">04</div>
+                    <h3>Subject Knowledge</h3>
+                    <p>
+                        Preparing for GATE helps you revise core concepts,
+                        strengthen fundamentals and develop problem-solving
+                        skills.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- Eligibility -->
+        <section class="resources info-section" id="eligibility">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">BEFORE YOU APPLY</span>
+                    <h2>Who can appear for GATE?</h2>
+                </div>
+            </div>
+
+            <div class="info-content">
+
+                <p>
+                    GATE eligibility depends on the examination's official
+                    rules for the relevant year. Generally, eligible candidates
+                    include students in the third year or higher of an approved
+                    undergraduate degree programme, as well as graduates in
+                    eligible disciplines.
+                </p>
+
+                <ul class="info-list">
+                    <li>
+                        <strong>Undergraduate students:</strong>
+                        Students meeting the minimum study-year requirement
+                        specified in the official notification.
+                    </li>
+
+                    <li>
+                        <strong>Graduates:</strong>
+                        Candidates holding an eligible degree recognised
+                        under the applicable GATE rules.
+                    </li>
+
+                    <li>
+                        <strong>Age limit:</strong>
+                        GATE has generally not imposed an upper age limit;
+                        verify the applicable year's official information.
+                    </li>
+
+                    <li>
+                        <strong>Important:</strong>
+                        Degree eligibility, accepted qualifications and
+                        paper-selection rules should be checked in the
+                        official brochure before applying.
+                    </li>
+                </ul>
+
+                <a href="https://gate2026.iitg.ac.in/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn">
+                    Visit Official GATE Website ↗
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- Exam Pattern -->
+        <section class="resources" id="exam-pattern">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">KNOW THE FORMAT</span>
+                    <h2>GATE exam pattern</h2>
+                </div>
+
+                <p>
+                    The following are general features of the examination.
+                    Always check the relevant year's official brochure.
+                </p>
+            </div>
+
+            <div class="resource-grid">
+
+                <article class="resource-card">
+                    <div class="resource-icon purple">3h</div>
+                    <h3>Examination Duration</h3>
+                    <p>
+                        The standard GATE examination duration is three hours.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon blue">100</div>
+                    <h3>Total Marks</h3>
+                    <p>
+                        A standard GATE paper carries 100 marks.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon orange">MCQ</div>
+                    <h3>Question Types</h3>
+                    <p>
+                        Questions may include Multiple Choice Questions (MCQ),
+                        Multiple Select Questions (MSQ) and Numerical Answer
+                        Type (NAT) questions.
+                    </p>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon green">GA</div>
+                    <h3>General Aptitude</h3>
+                    <p>
+                        General Aptitude is an important component of the
+                        examination. Its marks distribution depends on the
+                        applicable paper and official pattern.
+                    </p>
+                </article>
+
+            </div>
+
+            <div class="info-content">
+                <h3>Marking scheme</h3>
+
+                <p>
+                    MCQ questions may carry negative marks for incorrect
+                    answers. MSQ and NAT questions generally do not have
+                    negative marking. Exact question distribution and
+                    marking rules should be confirmed using the official
+                    notification for the relevant year.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- Papers -->
+        <section class="resources info-section" id="gate-papers">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">FIND YOUR SUBJECT</span>
+                    <h2>Explore GATE papers</h2>
+                </div>
+
+                <p>
+                    Choose a paper based on your academic background,
+                    interests and the applicable eligibility rules.
+                </p>
+            </div>
+
+            <div class="resource-grid">
+
+                <article class="resource-card">
+                    <div class="resource-icon purple">CS</div>
+                    <h3>Computer Science</h3>
+                    <p>
+                        Explore computer science and information technology
+                        topics, subject to the current paper syllabus.
+                    </p>
+                    <a th:href="@{/syllabus}" class="card-link">
+                        Explore Syllabus →
+                    </a>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon blue">EC</div>
+                    <h3>Electronics & Communication</h3>
+                    <p>
+                        Review the subjects and topics specified for the
+                        Electronics and Communication paper.
+                    </p>
+                    <a th:href="@{/syllabus}" class="card-link">
+                        Explore Syllabus →
+                    </a>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon orange">EE</div>
+                    <h3>Electrical Engineering</h3>
+                    <p>
+                        Find the official syllabus and relevant preparation
+                        material for Electrical Engineering.
+                    </p>
+                    <a th:href="@{/syllabus}" class="card-link">
+                        Explore Syllabus →
+                    </a>
+                </article>
+
+                <article class="resource-card">
+                    <div class="resource-icon green">ME</div>
+                    <h3>Mechanical Engineering</h3>
+                    <p>
+                        Review Mechanical Engineering topics and organise
+                        your subject-wise preparation.
+                    </p>
+                    <a th:href="@{/syllabus}" class="card-link">
+                        Explore Syllabus →
+                    </a>
+                </article>
+
+            </div>
+
+            <p class="section-footnote">
+                These are examples of GATE papers, not a complete list.
+                Check the official website for all available papers and
+                the latest paper codes.
+            </p>
+
+        </section>
+
+
+      
+<!-- Preparation Resources -->
+<section class="resources" id="preparation">
+
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">YOUR PREPARATION TOOLKIT</span>
+            <h2>Prepare with GATEPath</h2>
+        </div>
+
+        <p>
+            Build a strong foundation, practise consistently and
+            review your performance as you prepare.
+        </p>
+    </div>
+
+    <div class="resource-grid">
+
+        <!-- Subject-wise Syllabus -->
+        <a th:href="@{/syllabus}" class="resource-card">
+            <div class="resource-icon purple">01</div>
+            <h3>Subject-wise Syllabus</h3>
+            <p>
+                Understand the subjects and topics you need to study.
+            </p>
+            <span class="card-link">Explore Syllabus →</span>
+        </a>
+
+        <!-- Preparation Roadmap -->
+        <a th:href="@{/roadmap}" class="resource-card">
+            <div class="resource-icon blue">02</div>
+            <h3>Preparation Roadmap</h3>
+            <p>
+                Follow a structured learning path to organise your
+                preparation, complete topics and revise effectively.
+            </p>
+            <span class="card-link">Explore Roadmap →</span>
+        </a>
+
+        <!-- Practice Questions -->
+        <a th:href="@{/practice}" class="resource-card">
+            <div class="resource-icon orange">03</div>
+            <h3>Practice Questions</h3>
+            <p>
+                Strengthen your understanding with topic-wise
+                practice questions.
+            </p>
+            <span class="card-link">Start Practising →</span>
+        </a>
+
+        <!-- Mock Tests -->
+        <a th:href="@{/mock-tests}" class="resource-card">
+            <div class="resource-icon green">04</div>
+            <h3>Mock Tests</h3>
+            <p>
+                Practise under timed conditions and assess your
+                examination readiness.
+            </p>
+            <span class="card-link">Explore Mock Tests →</span>
+        </a>
+
+        <!-- My Progress -->
+        <a th:href="@{/my-progress}" class="resource-card">
+            <div class="resource-icon purple">05</div>
+            <h3>My Progress</h3>
+            <p>
+                Track your completed topics, practice performance
+                and preparation progress.
+            </p>
+            <span class="card-link">View Progress →</span>
+        </a>
+
+    </div>
+
+</section>
+
+
+
+        <!-- Final CTA -->
+        <section class="bottom-cta">
+
+            <div>
+                <span class="eyebrow">TAKE THE FIRST STEP</span>
+
+                <h2>
+                    Understand your syllabus.
+                    Plan your preparation.
+                </h2>
+
+                <p>
+                    Start by exploring the topics relevant to your GATE paper.
+                </p>
+            </div>
+
+            <a th:href="@{/syllabus}" class="btn cta-button">
+                Explore Syllabus →
+            </a>
+
+        </section>
+
+    </main>
+
+
+   <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>
