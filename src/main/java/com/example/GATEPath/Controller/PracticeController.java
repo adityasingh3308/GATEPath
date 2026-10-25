@@ -1,103 +1,96 @@
+
 package com.example.GATEPath.Controller;
 
 import com.example.GATEPath.Entity.Question;
+import com.example.GATEPath.Entity.User;
+import com.example.GATEPath.Repository.UserRepository;
 import com.example.GATEPath.Service.QuestionService;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class PracticeController {
 
-    private final QuestionService questionService;
+    private static final int PRACTICE_QUESTION_LIMIT = 20;
 
-    public PracticeController(QuestionService questionService) {
+    private final QuestionService questionService;
+    private final UserRepository userRepository;
+
+    public PracticeController(
+            QuestionService questionService,
+            UserRepository userRepository) {
         this.questionService = questionService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/practice")
     public String practicePage(
             @RequestParam(defaultValue = "false") boolean start,
             @RequestParam(required = false) String subject,
-            @RequestParam(defaultValue = "ALL") String subtopic,
-            @RequestParam(defaultValue = "ALL") String questionType,
-            @RequestParam(defaultValue = "10") String limit,
+            Authentication authentication,
             Model model) {
 
-        List<String> subjects =
-                questionService.getAvailableSubjects();
+        // Get available subjects.
+        List<String> subjects = questionService.getAvailableSubjects();
 
-        String selectedSubject = subject;
+        // Validate selected subject.
+        String selectedSubject = subject == null ? "" : subject.trim();
 
-        if (selectedSubject == null
-                || selectedSubject.isBlank()) {
-            selectedSubject = subjects.isEmpty()
-                    ? ""
-                    : subjects.get(0);
+        if (!subjects.contains(selectedSubject)) {
+            selectedSubject = subjects.isEmpty() ? "" : subjects.get(0);
         }
 
-        List<String> subtopics =
-                questionService.getAvailableSubtopics(selectedSubject);
-
-        String selectedSubtopic =
-                subtopic == null || subtopic.isBlank()
-                        ? "ALL"
-                        : subtopic;
-
-        String selectedType =
-                questionType == null || questionType.isBlank()
-                        ? "ALL"
-                        : questionType.toUpperCase();
-
-        String selectedLimit =
-                limit == null || limit.isBlank()
-                        ? "10"
-                        : limit.toUpperCase();
-
-        int questionLimit;
-
-        if ("ALL".equals(selectedLimit)) {
-            questionLimit = 0;
-        } else {
-            try {
-                questionLimit = Integer.parseInt(selectedLimit);
-
-                if (questionLimit != 10
-                        && questionLimit != 25
-                        && questionLimit != 50) {
-                    questionLimit = 10;
-                    selectedLimit = "10";
-                }
-            } catch (NumberFormatException exception) {
-                questionLimit = 10;
-                selectedLimit = "10";
-            }
-        }
+        // Get topics for the selected subject.
+        List<String> topics = selectedSubject.isBlank()
+                ? new ArrayList<>()
+                : questionService.getAvailableTopics(selectedSubject);
 
         List<Question> questions = new ArrayList<>();
 
-        if (start) {
-            questions = questionService.getPracticeQuestions(
+        // Assign questions only when Start Practice is clicked.
+        if (start && !selectedSubject.isBlank()) {
+
+            if (authentication == null
+                    || !authentication.isAuthenticated()
+                    || authentication.getName() == null) {
+                return "redirect:/login";
+            }
+
+            String email = authentication.getName();
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() ->
+                            new IllegalStateException(
+                                    "Logged-in user was not found."));
+
+            questions = questionService.getPracticeQuestionsForUser(
+                    user.getId(),
                     selectedSubject,
-                    selectedSubtopic,
-                    selectedType,
-                    questionLimit
+                    "ALL",
+                    "ALL",
+                    PRACTICE_QUESTION_LIMIT
             );
         }
 
         model.addAttribute("practiceMode", start);
         model.addAttribute("subjects", subjects);
-        model.addAttribute("subtopics", subtopics);
         model.addAttribute("selectedSubject", selectedSubject);
-        model.addAttribute("selectedSubtopic", selectedSubtopic);
-        model.addAttribute("selectedType", selectedType);
-        model.addAttribute("selectedLimit", selectedLimit);
+        model.addAttribute("topics", topics);
         model.addAttribute("questions", questions);
+        model.addAttribute("questionLimit", PRACTICE_QUESTION_LIMIT);
+
+        // Display a message if the user has no unused questions left.
+        model.addAttribute(
+                "noQuestionsAvailable",
+                start && questions.isEmpty()
+        );
 
         return "practice";
     }

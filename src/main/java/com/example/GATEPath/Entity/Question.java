@@ -5,26 +5,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "questions")
 public class Question {
 
     @Id
-    @Column(name = "question_id")
+    @Column(name = "question_id", nullable = false)
     private String questionId;
-
-    @Column(name = "topic")
-    private String topic;
-
-    @Column(name = "subtopic")
-    private String subtopic;
 
     @Column(name = "question_text", nullable = false, columnDefinition = "TEXT")
     private String questionText;
-
-    @Column(name = "question_type")
-    private String questionType;
 
     @Column(name = "option_a", columnDefinition = "TEXT")
     private String optionA;
@@ -41,17 +33,40 @@ public class Question {
     @Column(name = "correct_answer", columnDefinition = "TEXT")
     private String correctAnswer;
 
+    // Read the actual explanation column from MySQL.
     @Column(name = "explanation", columnDefinition = "TEXT")
     private String explanation;
+
+    @Column(name = "topic")
+    private String topic;
+
+    @Column(name = "subtopic")
+    private String subtopic;
+
+    @Column(name = "subject")
+    private String subject;
+
+    @Column(name = "question_type")
+    private String questionType;
 
     @Column(name = "difficulty")
     private String difficulty;
 
-    @Column(name = "source_type")
-    private String sourceType;
+    @Column(name = "marks")
+    private Integer marks;
+
+    @Column(name = "exam_year")
+    private Integer examYear;
+
+    @Column(name = "source_url", columnDefinition = "TEXT")
+    private String sourceUrl;
 
     @Column(name = "verification_status")
     private String verificationStatus;
+
+    // Compatibility field: not stored in the database.
+    @Transient
+    private String sourceType;
 
     public Question() {
     }
@@ -64,36 +79,12 @@ public class Question {
         this.questionId = questionId;
     }
 
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getSubtopic() {
-        return subtopic;
-    }
-
-    public void setSubtopic(String subtopic) {
-        this.subtopic = subtopic;
-    }
-
     public String getQuestionText() {
         return questionText;
     }
 
     public void setQuestionText(String questionText) {
         this.questionText = questionText;
-    }
-
-    public String getQuestionType() {
-        return questionType;
-    }
-
-    public void setQuestionType(String questionType) {
-        this.questionType = questionType;
     }
 
     public String getOptionA() {
@@ -144,6 +135,47 @@ public class Question {
         this.explanation = explanation;
     }
 
+    // Compatibility methods for existing code using getSolution/setSolution.
+    public String getSolution() {
+        return explanation;
+    }
+
+    public void setSolution(String solution) {
+        this.explanation = solution;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getSubtopic() {
+        return subtopic;
+    }
+
+    public void setSubtopic(String subtopic) {
+        this.subtopic = subtopic;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
+
     public String getDifficulty() {
         return difficulty;
     }
@@ -152,12 +184,28 @@ public class Question {
         this.difficulty = difficulty;
     }
 
-    public String getSourceType() {
-        return sourceType;
+    public Integer getMarks() {
+        return marks;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+    public void setMarks(Integer marks) {
+        this.marks = marks;
+    }
+
+    public Integer getExamYear() {
+        return examYear;
+    }
+
+    public void setExamYear(Integer examYear) {
+        this.examYear = examYear;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
     }
 
     public String getVerificationStatus() {
@@ -166,5 +214,13 @@ public class Question {
 
     public void setVerificationStatus(String verificationStatus) {
         this.verificationStatus = verificationStatus;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 }

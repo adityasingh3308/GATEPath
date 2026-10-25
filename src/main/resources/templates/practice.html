@@ -1,159 +1,202 @@
 
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/head :: head(title='GATEPath | Practice', pageCss='practice.css')}"></head>
-<body>
+
+<body class="gp-practice-body">
 
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="practice-page">
-    <section class="practice-hero">
-        <div class="practice-container">
-            <span class="practice-eyebrow">GATEPATH LEARNING</span>
-            <h1>Practice Questions</h1>
-            <p>Build confidence, strengthen concepts, and track your learning.</p>
-        </div>
-    </section>
-
     <div class="practice-container practice-main">
 
-        <!-- SETUP -->
+        <!-- =========================
+             PRACTICE SETUP
+        ========================== -->
         <section class="gp-setup" th:if="${!practiceMode}">
-            <div class="gp-setup-heading">
-                <div class="gp-setup-icon"><i class="fa-solid fa-sliders"></i></div>
+
+            <div class="gp-page-heading">
                 <div>
-                    <span class="gp-setup-eyebrow">PERSONALIZED LEARNING</span>
-                    <h2>Build Your Practice Session</h2>
-                    <p>Choose your preferences and practise at your own pace.</p>
+                    <h1>Practice Questions</h1>
+                    <p>Choose your subject and strengthen your concepts.</p>
                 </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(subjects)}" class="gp-empty-state">
-                <i class="fa-solid fa-book-open"></i>
-                <h3>Your question bank is waiting</h3>
-                <p>Questions will appear here once they are available in the database.</p>
+            <!-- NO SUBJECTS -->
+            <div th:if="${#lists.isEmpty(subjects)}"
+                 class="gp-empty-state"
+                 role="status">
+
+                <div class="gp-empty-icon">
+                    <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+                </div>
+
+                <h2>No subjects available</h2>
+                <p>
+                    Questions are not available yet. Please check your
+                    question bank and make sure subjects are assigned.
+                </p>
             </div>
 
+            <!-- SETUP FORM -->
             <form th:unless="${#lists.isEmpty(subjects)}"
-                  th:action="@{/practice}" method="get" class="gp-setup-form">
+                  th:action="@{/practice}"
+                  method="get"
+                  class="gp-setup-form">
 
-                <div class="gp-section-heading">
-                    <span class="gp-step">01</span>
-                    <div><h3>Choose Your Subject</h3><p>Select the subject and topic you want to practise.</p></div>
-                </div>
+                <input type="hidden" name="start" value="true">
 
-                <div class="gp-field-grid">
+                <!-- SUBJECT -->
+                <section class="gp-setup-section">
+
+                    <div class="gp-section-heading">
+                        <span class="gp-step">01</span>
+                        <div>
+                            <h2>Choose your subject</h2>
+                            <p>Select the GATE subject you want to practise.</p>
+                        </div>
+                    </div>
+
                     <div class="gp-field">
                         <label for="subject">Subject</label>
+
                         <div class="gp-select-wrap">
-                            <i class="fa-solid fa-book-open"></i>
-                            <select id="subject" name="subject" required
-                                    onchange="this.form.requestSubmit()">
+                            <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+
+                            <select id="subject" name="subject" required>
                                 <option th:each="item : ${subjects}"
-                                        th:value="${item}" th:text="${item}"
-                                        th:selected="${item == selectedSubject}"></option>
+                                        th:value="${item}"
+                                        th:text="${item}"
+                                        th:selected="${item == selectedSubject}">
+                                </option>
                             </select>
-                            <i class="fa-solid fa-chevron-down gp-select-arrow"></i>
+
+                            <i class="fa-solid fa-chevron-down gp-select-arrow"
+                               aria-hidden="true"></i>
                         </div>
                     </div>
 
-                    <div class="gp-field">
-                        <label for="subtopic">Topic</label>
-                        <div class="gp-select-wrap">
-                            <i class="fa-solid fa-layer-group"></i>
-                            <select id="subtopic" name="subtopic">
-                                <option value="ALL" th:selected="${selectedSubtopic == 'ALL'}">All Topics</option>
-                                <option th:each="item : ${subtopics}"
-                                        th:value="${item}" th:text="${item}"
-                                        th:selected="${item == selectedSubtopic}"></option>
-                            </select>
-                            <i class="fa-solid fa-chevron-down gp-select-arrow"></i>
+                </section>
+
+                <div class="gp-section-divider"></div>
+
+                <!-- AVAILABLE TOPICS -->
+                <section class="gp-setup-section">
+
+                    <div class="gp-section-heading">
+                        <span class="gp-step">02</span>
+                        <div>
+                            <h2>Available topics</h2>
+                            <p>Topics available for your selected subject.</p>
                         </div>
                     </div>
-                </div>
 
-                <div class="gp-section-divider"></div>
+                    <div class="gp-topic-coverage"
+                         th:if="${!#lists.isEmpty(topics)}">
 
-                <div class="gp-section-heading">
-                    <span class="gp-step">02</span>
-                    <div><h3>Select Question Type</h3><p>Choose one format or mix all question types.</p></div>
-                </div>
+                        <div class="gp-topic-item"
+                             th:each="topic : ${topics}">
 
-                <div class="gp-choice-grid">
-                    <label class="gp-choice-card" th:classappend="${selectedType == 'ALL' ? ' is-selected' : ''}">
-                        <input type="radio" name="questionType" value="ALL" th:checked="${selectedType == 'ALL'}">
-                        <span class="gp-choice-check"><i class="fa-solid fa-check"></i></span>
-                        <span class="gp-choice-icon gp-icon-all"><i class="fa-solid fa-shapes"></i></span>
-                        <strong>Mixed Practice</strong><small>All question types</small>
-                    </label>
-                    <label class="gp-choice-card" th:classappend="${selectedType == 'MCQ' ? ' is-selected' : ''}">
-                        <input type="radio" name="questionType" value="MCQ" th:checked="${selectedType == 'MCQ'}">
-                        <span class="gp-choice-check"><i class="fa-solid fa-check"></i></span>
-                        <span class="gp-choice-icon gp-icon-mcq"><i class="fa-solid fa-circle-dot"></i></span>
-                        <strong>MCQ</strong><small>Single correct answer</small>
-                    </label>
-                    <label class="gp-choice-card" th:classappend="${selectedType == 'MSQ' ? ' is-selected' : ''}">
-                        <input type="radio" name="questionType" value="MSQ" th:checked="${selectedType == 'MSQ'}">
-                        <span class="gp-choice-check"><i class="fa-solid fa-check"></i></span>
-                        <span class="gp-choice-icon gp-icon-msq"><i class="fa-solid fa-list-check"></i></span>
-                        <strong>MSQ</strong><small>Multiple correct answers</small>
-                    </label>
-                    <label class="gp-choice-card" th:classappend="${selectedType == 'NAT' ? ' is-selected' : ''}">
-                        <input type="radio" name="questionType" value="NAT" th:checked="${selectedType == 'NAT'}">
-                        <span class="gp-choice-check"><i class="fa-solid fa-check"></i></span>
-                        <span class="gp-choice-icon gp-icon-nat"><i class="fa-solid fa-calculator"></i></span>
-                        <strong>NAT</strong><small>Numerical answer</small>
-                    </label>
-                </div>
+                            <i class="fa-solid fa-bookmark" aria-hidden="true"></i>
+                            <span th:text="${topic}">Topic name</span>
 
-                <div class="gp-section-divider"></div>
+                            <i class="fa-solid fa-check gp-topic-check"
+                               aria-hidden="true"></i>
+                        </div>
 
-                <div class="gp-section-heading">
-                    <span class="gp-step">03</span>
-                    <div><h3>Set Your Question Limit</h3><p>Choose the size of your practice session.</p></div>
-                </div>
+                    </div>
 
-                <div class="gp-limit-grid">
-                    <label class="gp-limit-card" th:classappend="${selectedLimit == '10' ? ' is-selected' : ''}">
-                        <input type="radio" name="limit" value="10" th:checked="${selectedLimit == '10'}">
-                        <strong>10</strong><span>Quick practice</span>
-                    </label>
-                    <label class="gp-limit-card" th:classappend="${selectedLimit == '25' ? ' is-selected' : ''}">
-                        <input type="radio" name="limit" value="25" th:checked="${selectedLimit == '25'}">
-                        <strong>25</strong><span>Focused session</span>
-                    </label>
-                    <label class="gp-limit-card" th:classappend="${selectedLimit == '50' ? ' is-selected' : ''}">
-                        <input type="radio" name="limit" value="50" th:checked="${selectedLimit == '50'}">
-                        <strong>50</strong><span>Deep practice</span>
-                    </label>
-                    <label class="gp-limit-card" th:classappend="${selectedLimit == 'ALL' ? ' is-selected' : ''}">
-                        <input type="radio" name="limit" value="ALL" th:checked="${selectedLimit == 'ALL'}">
-                        <strong><i class="fa-solid fa-infinity"></i></strong><span>All available</span>
-                    </label>
-                </div>
+                    <div class="gp-topic-empty"
+                         th:if="${#lists.isEmpty(topics)}"
+                         role="status">
 
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span>No topics are available for this subject yet.</span>
+                    </div>
+
+                </section>
+
+                <!-- START PRACTICE -->
                 <div class="gp-start-area">
-                    <p class="gp-start-note"><i class="fa-solid fa-circle-info"></i>
-                        Your session will use the preferences selected above.</p>
-                    <button type="submit" name="start" value="true" class="gp-start-button">
-                        Start Practice <i class="fa-solid fa-arrow-right"></i>
+
+                    <p class="gp-start-note">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        Up to
+                        <strong th:text="${questionLimit}">20</strong>
+                        questions may be included in your session.
+                    </p>
+
+                    <button type="submit" class="gp-start-button">
+                        <span>Start Practice</span>
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </button>
+
                 </div>
+
             </form>
         </section>
 
-        <!-- PRACTICE SESSION -->
+
+        <!-- =========================
+             ACTIVE PRACTICE SESSION
+        ========================== -->
         <section class="practice-layout" th:if="${practiceMode}">
+
+            <!-- QUESTION PANEL -->
             <div class="question-panel">
 
-                <div class="empty-session" th:if="${#lists.isEmpty(questions)}">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <h2>No matching questions found</h2>
-                    <p>There may not be enough questions for this selection yet. Try another topic or question type.</p>
-                    <a th:href="@{/practice}" class="practice-btn btn-primary">Back to Practice Setup</a>
+                <!-- SESSION HEADING -->
+                <div class="gp-active-session-header"
+                     th:unless="${#lists.isEmpty(questions)}">
+
+                    <div>
+                        <h1 th:text="${selectedSubject}">Selected Subject</h1>
+                        <p>Answer each question and review its explanation.</p>
+                    </div>
+
+                    <div class="gp-active-session-count">
+                        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                        <span>
+                            <strong th:text="${#lists.size(questions)}">20</strong>
+                            questions
+                        </span>
+                    </div>
+
                 </div>
 
-                <div th:unless="${#lists.isEmpty(questions)}">
+
+                <!-- EMPTY SESSION -->
+                <div class="empty-session"
+                     th:if="${#lists.isEmpty(questions)}"
+                     role="status">
+
+                    <div class="gp-empty-icon">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    </div>
+
+                    <h2>No questions available</h2>
+
+                    <p>
+                        There are no unused questions available for this session.
+                        Try another subject or add more questions to your question bank.
+                    </p>
+
+                    <a th:href="@{/practice}"
+                       class="practice-btn btn-primary">
+                        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        Back to Practice
+                    </a>
+
+                </div>
+
+
+                <!-- QUESTIONS CONTAINER -->
+                <div th:unless="${#lists.isEmpty(questions)}"
+                     id="practiceQuestionContainer"
+                     th:attr="data-total-questions=${#lists.size(questions)}">
+
+                    <!-- INDIVIDUAL QUESTION -->
                     <article th:each="question, stat : ${questions}"
                              class="question-slide"
                              th:hidden="${!stat.first}"
@@ -162,134 +205,404 @@
                                       data-correct-answer=${question.correctAnswer},
                                       data-explanation=${question.explanation}">
 
+                        <!-- QUESTION HEADER -->
                         <header class="question-topbar">
-                            <div>
-                                <span class="question-label">PRACTICE SESSION</span>
-                                <h2>Question <span th:text="${stat.count}">1</span></h2>
+
+                            <div class="question-heading-copy">
+                                <span class="question-label">
+                                    Question
+                                    <span th:text="${stat.count}">1</span>
+                                </span>
+
+                                <h2>
+                                    Solve this question
+                                    <span class="question-total"
+                                          th:text="|${stat.count} of ${#lists.size(questions)}|">
+                                        1 of 20
+                                    </span>
+                                </h2>
                             </div>
+
                             <span class="difficulty"
-                                  th:text="${question.difficulty != null ? question.difficulty : 'Practice'}">Easy</span>
+                                  th:text="${question.difficulty != null ? question.difficulty : 'Practice'}">
+                                Medium
+                            </span>
+
                         </header>
 
+
+                        <!-- QUESTION CONTENT -->
                         <div class="question-content">
-                            <p class="question-text" th:text="${question.questionText}">Question text</p>
+
+                            <!-- TOPIC, TYPE AND DIFFICULTY -->
+                            <div class="gp-question-meta">
+
+                                <span class="gp-meta-item"
+                                      th:if="${question.topic != null and !#strings.isEmpty(question.topic)}">
+                                    <i class="fa-solid fa-folder" aria-hidden="true"></i>
+                                    <span th:text="${question.topic}">Topic</span>
+                                </span>
+
+                                <span class="gp-question-type-badge"
+                                      th:classappend="${question.questionType != null ? ' type-' + #strings.toLowerCase(question.questionType) : ' type-unknown'}">
+                                    <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                                    <span th:text="${question.questionType != null ? question.questionType : 'Unknown'}">
+                                        MCQ
+                                    </span>
+                                </span>
+
+                                <span class="gp-difficulty-badge"
+                                      th:classappend="${question.difficulty != null ? ' difficulty-' + #strings.toLowerCase(question.difficulty) : ' difficulty-unknown'}">
+                                    <i class="fa-solid fa-signal" aria-hidden="true"></i>
+                                    <span th:text="${question.difficulty != null ? question.difficulty : 'Not specified'}">
+                                        Medium
+                                    </span>
+                                </span>
+
+                            </div>
+
+
+                            <!-- QUESTION TEXT -->
+                            <div class="question-text"
+                                 th:text="${question.questionText}">
+                                Question text appears here.
+                            </div>
+
+
+                            <!-- QUESTION TYPE HINTS -->
+                            <p class="question-hint"
+                               th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'MCQ')}">
+                                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                Select one correct answer.
+                            </p>
 
                             <p class="question-hint"
                                th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'MSQ')}">
-                                <i class="fa-solid fa-circle-info"></i> Select all correct answers.
+                                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                Select all correct answers.
                             </p>
-                            <p class="question-hint"
-                               th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'MCQ')}">
-                                <i class="fa-solid fa-circle-info"></i> Select one correct answer.
-                            </p>
+
                             <p class="question-hint"
                                th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'NAT')}">
-                                <i class="fa-solid fa-circle-info"></i> Enter your numerical answer.
+                                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                Enter your numerical answer.
                             </p>
 
+
+                            <!-- NAT ANSWER INPUT -->
                             <div class="options-list"
                                  th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'NAT')}">
+
                                 <label class="nat-option">
                                     <span>Your answer</span>
-                                    <input type="number" class="nat-answer" step="any"
-                                           inputmode="decimal" placeholder="Enter numerical answer">
+                                    <input type="number"
+                                           class="nat-answer"
+                                           step="any"
+                                           inputmode="decimal"
+                                           placeholder="Enter numerical answer"
+                                           aria-label="Your numerical answer">
                                 </label>
+
                             </div>
 
+
+                            <!-- MCQ / MSQ OPTIONS -->
                             <div class="options-list"
                                  th:if="${question.questionType != null and (#strings.equalsIgnoreCase(question.questionType, 'MCQ') or #strings.equalsIgnoreCase(question.questionType, 'MSQ'))}">
 
-                                <label class="option-item" th:if="${question.optionA != null and !#strings.isEmpty(question.optionA)}">
+                                <label class="option-item"
+                                       th:if="${question.optionA != null and !#strings.isEmpty(question.optionA)}">
                                     <input th:type="${#strings.equalsIgnoreCase(question.questionType, 'MSQ') ? 'checkbox' : 'radio'}"
-                                           th:name="|answer-${stat.index}|" value="A">
-                                    <span class="option-letter">A</span><span class="option-text" th:text="${question.optionA}">Option A</span>
+                                           th:name="|answer-${stat.index}|"
+                                           value="A">
+                                    <span class="option-letter">A</span>
+                                    <span class="option-text" th:text="${question.optionA}">Option A</span>
                                 </label>
 
-                                <label class="option-item" th:if="${question.optionB != null and !#strings.isEmpty(question.optionB)}">
+                                <label class="option-item"
+                                       th:if="${question.optionB != null and !#strings.isEmpty(question.optionB)}">
                                     <input th:type="${#strings.equalsIgnoreCase(question.questionType, 'MSQ') ? 'checkbox' : 'radio'}"
-                                           th:name="|answer-${stat.index}|" value="B">
-                                    <span class="option-letter">B</span><span class="option-text" th:text="${question.optionB}">Option B</span>
+                                           th:name="|answer-${stat.index}|"
+                                           value="B">
+                                    <span class="option-letter">B</span>
+                                    <span class="option-text" th:text="${question.optionB}">Option B</span>
                                 </label>
 
-                                <label class="option-item" th:if="${question.optionC != null and !#strings.isEmpty(question.optionC)}">
+                                <label class="option-item"
+                                       th:if="${question.optionC != null and !#strings.isEmpty(question.optionC)}">
                                     <input th:type="${#strings.equalsIgnoreCase(question.questionType, 'MSQ') ? 'checkbox' : 'radio'}"
-                                           th:name="|answer-${stat.index}|" value="C">
-                                    <span class="option-letter">C</span><span class="option-text" th:text="${question.optionC}">Option C</span>
+                                           th:name="|answer-${stat.index}|"
+                                           value="C">
+                                    <span class="option-letter">C</span>
+                                    <span class="option-text" th:text="${question.optionC}">Option C</span>
                                 </label>
 
-                                <label class="option-item" th:if="${question.optionD != null and !#strings.isEmpty(question.optionD)}">
+                                <label class="option-item"
+                                       th:if="${question.optionD != null and !#strings.isEmpty(question.optionD)}">
                                     <input th:type="${#strings.equalsIgnoreCase(question.questionType, 'MSQ') ? 'checkbox' : 'radio'}"
-                                           th:name="|answer-${stat.index}|" value="D">
-                                    <span class="option-letter">D</span><span class="option-text" th:text="${question.optionD}">Option D</span>
+                                           th:name="|answer-${stat.index}|"
+                                           value="D">
+                                    <span class="option-letter">D</span>
+                                    <span class="option-text" th:text="${question.optionD}">Option D</span>
                                 </label>
+
                             </div>
 
-                            <p class="practice-feedback" aria-live="polite"></p>
 
-                            <section class="answer-result" hidden aria-live="polite">
+                            <!-- ANSWER FEEDBACK -->
+                            <p class="practice-feedback"
+                               aria-live="polite"
+                               aria-atomic="true"></p>
+
+
+                            <!-- ANSWER AND EXPLANATION -->
+                            <section class="answer-result"
+                                     hidden
+                                     aria-live="polite"
+                                     aria-atomic="true">
+
                                 <h3 class="answer-result-title"></h3>
                                 <p class="answer-result-explanation"></p>
+
                             </section>
 
+
+                            <!-- QUESTION NAVIGATION -->
                             <div class="question-actions">
-                                <button type="button" class="practice-btn btn-outline previousQuestion" disabled>
-                                    <i class="fa-solid fa-arrow-left"></i> Previous
+
+                                <button type="button"
+                                        class="practice-btn btn-outline previousQuestion"
+                                        disabled>
+                                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                                    Previous
                                 </button>
-                                <button type="button" class="practice-btn btn-check checkAnswerButton">
-                                    <i class="fa-solid fa-check"></i> Check Answer
+
+                                <button type="button"
+                                        class="practice-btn btn-check checkAnswerButton">
+                                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                    Check Answer
                                 </button>
-                                <button type="button" class="practice-btn btn-primary nextQuestion">
-                                    Next Question <i class="fa-solid fa-arrow-right"></i>
+
+                                <button type="button"
+                                        class="practice-btn btn-primary nextQuestion">
+                                    Next Question
+                                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                 </button>
+
                             </div>
+
                         </div>
                     </article>
 
-                    <!-- SESSION SUMMARY -->
-                    <section class="session-complete" hidden>
-                        <div class="complete-icon"><i class="fa-solid fa-flag-checkered"></i></div>
-                        <span class="practice-eyebrow">SESSION FINISHED</span>
-                        <h2>Practice session complete!</h2>
-                        <p>Review your progress and keep building your GATE preparation.</p>
-                        <div class="completion-stats">
-                            <div><strong id="finalAttempted">0</strong><span>Attempted</span></div>
-                            <div><strong id="finalCorrect">0</strong><span>Correct</span></div>
-                            <div><strong id="finalAccuracy">0%</strong><span>Accuracy</span></div>
+
+                    <!-- =========================
+                         SESSION RESULT SCREEN
+                    ========================== -->
+                    <section class="session-complete"
+                             id="sessionComplete"
+                             hidden
+                             aria-labelledby="sessionCompleteTitle">
+
+                        <div class="complete-icon">
+                            <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
                         </div>
-                        <a th:href="@{/practice}" class="practice-btn btn-primary">Start Another Session</a>
+
+                        <h2 id="sessionCompleteTitle">Practice session complete!</h2>
+                        <p>Review your results and continue improving.</p>
+
+                        <div class="completion-stats">
+
+                            <div>
+                                <strong id="finalAttempted">0</strong>
+                                <span>Attempted</span>
+                            </div>
+
+                            <div>
+                                <strong id="finalCorrect">0</strong>
+                                <span>Correct</span>
+                            </div>
+
+                            <div>
+                                <strong id="finalAccuracy">0%</strong>
+                                <span>Accuracy</span>
+                            </div>
+
+                        </div>
+
+                        <div class="completion-extra-stats">
+                            <p>Incorrect: <strong id="finalIncorrect">0</strong></p>
+                            <p>Unanswered: <strong id="finalUnanswered">0</strong></p>
+                        </div>
+
+                        <a th:href="@{/practice}"
+                           class="practice-btn btn-primary">
+                            Practise Again
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+
                     </section>
+
                 </div>
             </div>
 
-            <aside class="practice-sidebar" th:unless="${#lists.isEmpty(questions)}">
-                <section class="sidebar-card">
-                    <span class="sidebar-kicker">YOUR SESSION</span>
-                    <h3>Practice Progress</h3>
-                    <div class="summary-item"><span>Attempted</span><strong id="attemptedCount">0</strong></div>
-                    <div class="progress-track"><div class="progress-fill" id="practiceProgress"></div></div>
-                    <p class="progress-caption" id="progressCaption">0% completed</p>
+
+            <!-- =========================
+                 RIGHT SIDEBAR
+            ========================== -->
+            <aside id="practiceSidebar"
+                   class="practice-sidebar"
+                   th:unless="${#lists.isEmpty(questions)}"
+                   aria-label="Practice session overview">
+
+                <!-- PROGRESS CARD -->
+                <section class="sidebar-card progress-card">
+
+                    <div class="gp-sidebar-heading">
+                        <div class="gp-sidebar-icon">
+                            <i class="fa-solid fa-chart-simple" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h2>Your progress</h2>
+                        </div>
+                    </div>
+
+                    <div class="summary-item">
+                        <span>Attempted</span>
+                        <strong id="attemptedCount" aria-live="polite">0</strong>
+                    </div>
+
+                    <div class="progress-track"
+                         role="progressbar"
+                         aria-label="Practice completion"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-valuenow="0"
+                         id="practiceProgressTrack">
+                        <div class="progress-fill" id="practiceProgress"></div>
+                    </div>
+
+                    <p class="progress-caption" id="progressCaption" aria-live="polite">
+                        0% completed
+                    </p>
+
+                    <div class="gp-sidebar-divider"></div>
+
+                    <div class="gp-mini-stat">
+                        <span>
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                            Correct
+                        </span>
+                        <strong id="sidebarCorrect">0</strong>
+                    </div>
+
+                    <div class="gp-mini-stat">
+                        <span>
+                            <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
+                            Incorrect
+                        </span>
+                        <strong id="sidebarIncorrect">0</strong>
+                    </div>
+
                 </section>
 
+
+                <!-- QUESTION PALETTE -->
+                <section class="sidebar-card question-navigator-card"
+                         aria-labelledby="questionPaletteTitle">
+
+                    <div class="gp-sidebar-heading">
+                        <div class="gp-sidebar-icon">
+                            <i class="fa-solid fa-grip" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h2 id="questionPaletteTitle">Question palette</h2>
+                        </div>
+                    </div>
+
+                    <p class="gp-palette-help">
+                        Select a number to jump to a question.
+                    </p>
+
+                    <nav class="gp-question-palette"
+                         aria-label="Navigate between practice questions">
+
+                        <button th:each="question, stat : ${questions}"
+                                type="button"
+                                class="gp-palette-button"
+                                th:classappend="${stat.first} ? ' is-current' : ''"
+                                th:attr="data-jump-index=${stat.index},
+                                         aria-label=|Go to question ${stat.count}|"
+                                th:aria-current="${stat.first ? 'step' : null}"
+                                th:text="${stat.count}">
+                            1
+                        </button>
+
+                    </nav>
+
+                    <div class="gp-palette-legend">
+                        <span>
+                            <i class="legend-dot legend-current" aria-hidden="true"></i>
+                            Current
+                        </span>
+                        <span>
+                            <i class="legend-dot legend-attempted" aria-hidden="true"></i>
+                            Attempted
+                        </span>
+                        <span>
+                            <i class="legend-dot legend-unanswered" aria-hidden="true"></i>
+                            Unanswered
+                        </span>
+                    </div>
+
+                </section>
+
+
+                <!-- PRACTICE TIPS -->
                 <section class="sidebar-card instructions-card">
-                    <h3><i class="fa-solid fa-lightbulb"></i> Practice Tips</h3>
+
+                    <div class="gp-sidebar-heading">
+                        <div class="gp-sidebar-icon">
+                            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h2>Practice tips</h2>
+                        </div>
+                    </div>
+
                     <ul>
-                        <li>Read every question carefully.</li>
-                        <li>Use Check Answer to review your response.</li>
+                        <li>Read the complete question before answering.</li>
+                        <li>Check your answer to see the explanation.</li>
+                        <li>MCQ questions have one correct option.</li>
                         <li>MSQ questions may have multiple correct options.</li>
-                        <li>Read the explanation to strengthen your concepts.</li>
+                        <li>NAT questions require a numerical answer.</li>
                     </ul>
+
                 </section>
 
-                <a th:href="@{/practice}" class="practice-btn btn-outline end-session">
-                    <i class="fa-solid fa-arrow-rotate-left"></i> End Session
-                </a>
+
+                <!-- END SESSION: BUTTON, NOT LINK -->
+                <button type="button"
+                        class="practice-btn btn-outline end-session">
+                    <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
+                    End Session
+                </button>
+
             </aside>
+
         </section>
+
     </div>
 </main>
 
+
+<!-- COMMON FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- COMMON HEADER JS -->
 <script th:src="@{/js/header.js}" defer></script>
+
+<!-- PRACTICE PAGE JS -->
 <script th:src="@{/js/practice.js}" defer></script>
+
 </body>
 </html>
