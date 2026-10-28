@@ -1620,3 +1620,92 @@ body.dark .practice-page .answer-result.result-incorrect {
         font-size: 20px;
     }
 }
+
+/* =========================================
+   NAT NUMERICAL ANSWER - RESPONSIVE LAYOUT
+========================================= */
+
+.nat-options-list {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+}
+
+.nat-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    border: 1px solid var(--border-color, #dbe2ea);
+    border-radius: 14px;
+    background: var(--card-background, #ffffff);
+    box-sizing: border-box;
+}
+
+.nat-answer-label {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text-color, #1f2937);
+}
+
+.nat-option .nat-answer {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 10px;
+    background: var(--input-background, #ffffff);
+    color: var(--text-color, #111827);
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    outline: none;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.nat-option .nat-answer:focus {
+    border-color: var(--primary-color, #4f46e5);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.nat-option .nat-answer:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.nat-input-hint {
+    width: 100%;
+    max-width: 440px;
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted-color, #64748b);
+}
+
+@media (max-width: 600px) {
+    .nat-options-list {
+        margin-top: 18px;
+    }
+
+    .nat-option {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .nat-option .nat-answer {
+        min-height: 46px;
+        font-size: 16px;
+    }
+}

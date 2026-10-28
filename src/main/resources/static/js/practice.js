@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -40,8 +41,29 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentIndex = 0;
     let sessionFinished = false;
 
+    // Allows integers, decimals, negative numbers and leading decimal points.
+    // Examples: 12, -3, 0.27, .5, 12.50
+    function parseNumericAnswer(value) {
+        const text = String(value ?? "").trim();
+
+        if (!text || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) {
+            return null;
+        }
+
+        const number = Number(text);
+        return Number.isFinite(number) ? number : null;
+    }
+
+    function formatNumber(value) {
+        if (!Number.isFinite(value)) return "";
+
+        // Avoid displaying unnecessary zeros such as 0.270000.
+        return String(Number(value.toPrecision(12)));
+    }
+
     function getQuestionIndex(slide) {
         const index = Number(slide.dataset.questionIndex);
+
         return Number.isInteger(index) && index >= 0
             ? index
             : slides.indexOf(slide);
@@ -73,12 +95,47 @@ document.addEventListener("DOMContentLoaded", () => {
         return slide.querySelector(".nat-answer");
     }
 
+    function getNatRange(slide) {
+        const minText = (slide.dataset.natMin || "").trim();
+        const maxText = (slide.dataset.natMax || "").trim();
+
+        const min = minText ? parseNumericAnswer(minText) : null;
+        const max = maxText ? parseNumericAnswer(maxText) : null;
+
+        if (min !== null && max !== null && min <= max) {
+            return { min, max };
+        }
+
+        // Backward compatibility: older NAT records may only have
+        // their numerical answer stored in correct_answer.
+        const raw = (slide.dataset.correctAnswer || "").trim();
+        const expected = parseNumericAnswer(raw);
+
+        if (expected !== null) {
+            return { min: expected, max: expected };
+        }
+
+        return null;
+    }
+
+    function getNatExpectedText(slide) {
+        const range = getNatRange(slide);
+
+        if (range) {
+            if (range.min === range.max) {
+                return formatNumber(range.min);
+            }
+
+            return `${formatNumber(range.min)} – ${formatNumber(range.max)}`;
+        }
+
+        return "";
+    }
+
     function hasAnswer(slide) {
         if (getQuestionType(slide) === "NAT") {
             const input = getNatInput(slide);
-            return !!input &&
-                input.value.trim() !== "" &&
-                Number.isFinite(Number(input.value));
+            return !!input && parseNumericAnswer(input.value) !== null;
         }
 
         return getSelectedOptions(slide).length > 0;
@@ -94,23 +151,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function checkCorrectness(slide) {
         const type = getQuestionType(slide);
-        const raw = (slide.dataset.correctAnswer || "").trim();
 
-        if (!raw) return null;
-
+        // NAT answers come from nat_min / nat_max first.
+        // Do not reject a NAT question just because correct_answer is blank.
         if (type === "NAT") {
             const input = getNatInput(slide);
-            if (!input || !input.value.trim()) return false;
+            if (!input) return null;
 
-            const entered = Number(input.value);
-            const expected = Number(raw);
+            const entered = parseNumericAnswer(input.value);
+            if (entered === null) return false;
 
-            if (!Number.isFinite(entered) || !Number.isFinite(expected)) {
-                return null;
-            }
+            const range = getNatRange(slide);
+            if (!range) return null;
 
-            return Math.abs(entered - expected) <= 0.000001;
+            const tolerance = 0.000001;
+
+            return entered >= range.min - tolerance &&
+                entered <= range.max + tolerance;
         }
+
+        const raw = (slide.dataset.correctAnswer || "").trim();
+        if (!raw) return null;
 
         if (type === "MCQ" || type === "MSQ") {
             const correct = getCorrectOptions(slide);
@@ -140,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const result = slide.querySelector(".answer-result");
+
         if (result) {
             result.hidden = true;
             result.classList.remove("result-correct", "result-incorrect");
@@ -165,24 +227,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if (unavailable) {
             title.textContent = "Answer key unavailable";
             explanation.textContent =
-                "Correct answer missing hai ya supported format mein nahi hai. Question bank mein answer verify karein.";
+                "Correct answer available nahi hai. Question bank mein correct_answer aur NAT answer range verify karein.";
             return;
         }
 
         result.classList.add(isCorrect ? "result-correct" : "result-incorrect");
 
         const type = getQuestionType(slide);
-        const raw = (slide.dataset.correctAnswer || "").trim();
+        let answerText;
 
-        const answerText = type === "MCQ" || type === "MSQ"
-            ? getCorrectOptions(slide).join(", ")
-            : raw;
+        if (type === "MCQ" || type === "MSQ") {
+            answerText = getCorrectOptions(slide).join(", ");
+        } else if (type === "NAT") {
+            answerText = getNatExpectedText(slide);
+        } else {
+            answerText = (slide.dataset.correctAnswer || "").trim();
+        }
 
         title.textContent = isCorrect
             ? `✓ Correct Answer! (${answerText})`
             : `✗ Incorrect Answer. Correct Answer: ${answerText}`;
 
         const explanationText = getExplanation(slide);
+
         explanation.textContent = explanationText
             ? `Explanation: ${explanationText}`
             : "Is question ki explanation available nahi hai.";
@@ -215,6 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const button = slide.querySelector(".checkAnswerButton");
+
         if (button) {
             button.disabled = true;
             button.textContent = "Answer Checked";
@@ -297,9 +365,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (result === null) {
             displayResult(slide, false, true);
         } else {
-            const type = getQuestionType(slide);
-
-            if (type === "MCQ" || type === "MSQ") {
+            if (getQuestionType(slide) === "MCQ" ||
+                getQuestionType(slide) === "MSQ") {
                 highlightOptions(slide);
             }
 
@@ -313,7 +380,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (sessionFinished || isAnswerLocked(slide)) return;
 
         if (!hasAnswer(slide)) {
-            showFeedback(slide, "Please select or enter an answer first.");
+            showFeedback(
+                slide,
+                getQuestionType(slide) === "NAT"
+                    ? "Enter a valid number, for example 12 or 0.27."
+                    : "Please select an answer first."
+            );
             return;
         }
 
@@ -396,7 +468,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (finalUnanswered) finalUnanswered.textContent = String(unanswered);
         if (finalAccuracy) finalAccuracy.textContent = `${accuracy}%`;
 
-        // Hide practice controls/sidebar so only the result remains.
         if (practiceSidebar) practiceSidebar.hidden = true;
         if (sessionHeader) sessionHeader.hidden = true;
 
@@ -482,7 +553,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!hasAnswer(slide)) {
                     showFeedback(
                         slide,
-                        "Please select or enter an answer before continuing."
+                        getQuestionType(slide) === "NAT"
+                            ? "Enter a valid numerical answer before continuing."
+                            : "Please select an answer before continuing."
                     );
                     return;
                 }
@@ -512,7 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // End Session button: must be a button, not a link to /practice.
+    // End session
     endSessionButtons.forEach(button => {
         button.addEventListener("click", event => {
             event.preventDefault();

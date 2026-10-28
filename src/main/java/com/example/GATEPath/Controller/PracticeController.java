@@ -26,6 +26,7 @@ public class PracticeController {
     public PracticeController(
             QuestionService questionService,
             UserRepository userRepository) {
+
         this.questionService = questionService;
         this.userRepository = userRepository;
     }
@@ -37,61 +38,96 @@ public class PracticeController {
             Authentication authentication,
             Model model) {
 
-        // Get available subjects.
-        List<String> subjects = questionService.getAvailableSubjects();
+        // 1. Fetch subjects available in the question bank.
+        List<String> subjects =
+                questionService.getAvailableSubjects();
 
-        // Validate selected subject.
-        String selectedSubject = subject == null ? "" : subject.trim();
+        // 2. Validate the selected subject.
+        String selectedSubject =
+                subject == null ? "" : subject.trim();
 
         if (!subjects.contains(selectedSubject)) {
-            selectedSubject = subjects.isEmpty() ? "" : subjects.get(0);
+            selectedSubject = subjects.isEmpty()
+                    ? ""
+                    : subjects.get(0);
         }
 
-        // Get topics for the selected subject.
+        // 3. Fetch topics for the selected subject.
         List<String> topics = selectedSubject.isBlank()
                 ? new ArrayList<>()
                 : questionService.getAvailableTopics(selectedSubject);
 
+        // 4. Questions are fetched only when practice starts.
         List<Question> questions = new ArrayList<>();
 
-        // Assign questions only when Start Practice is clicked.
-        if (start && !selectedSubject.isBlank()) {
+        if (start) {
 
+            // Require login before starting a practice session.
             if (authentication == null
                     || !authentication.isAuthenticated()
-                    || authentication.getName() == null) {
+                    || authentication.getName() == null
+                    || authentication.getName().isBlank()) {
+
                 return "redirect:/login";
             }
 
+            // Do not start a session without a valid subject.
+            if (selectedSubject.isBlank()) {
+                model.addAttribute("practiceMode", false);
+                addSetupAttributes(
+                        model, subjects, selectedSubject, topics
+                );
+                return "practice";
+            }
+
+            // Find the currently logged-in user.
             String email = authentication.getName();
 
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() ->
                             new IllegalStateException(
-                                    "Logged-in user was not found."));
+                                    "Logged-in user was not found."
+                            ));
 
-            questions = questionService.getPracticeQuestionsForUser(
-                    user.getId(),
-                    selectedSubject,
-                    "ALL",
-                    "ALL",
-                    PRACTICE_QUESTION_LIMIT
-            );
+            // Fetch up to 20 unused questions for this user
+            // and selected subject.
+            questions =
+                    questionService.getPracticeQuestionsForUser(
+                            user.getId(),
+                            selectedSubject,
+                            "ALL",
+                            "ALL",
+                            PRACTICE_QUESTION_LIMIT
+                    );
         }
 
+        // 5. Supply all required attributes to Thymeleaf.
         model.addAttribute("practiceMode", start);
-        model.addAttribute("subjects", subjects);
-        model.addAttribute("selectedSubject", selectedSubject);
-        model.addAttribute("topics", topics);
-        model.addAttribute("questions", questions);
-        model.addAttribute("questionLimit", PRACTICE_QUESTION_LIMIT);
+        addSetupAttributes(
+                model, subjects, selectedSubject, topics
+        );
 
-        // Display a message if the user has no unused questions left.
+        model.addAttribute("questions", questions);
+        model.addAttribute(
+                "questionLimit", PRACTICE_QUESTION_LIMIT
+        );
+
         model.addAttribute(
                 "noQuestionsAvailable",
                 start && questions.isEmpty()
         );
 
         return "practice";
+    }
+
+    private void addSetupAttributes(
+            Model model,
+            List<String> subjects,
+            String selectedSubject,
+            List<String> topics) {
+
+        model.addAttribute("subjects", subjects);
+        model.addAttribute("selectedSubject", selectedSubject);
+        model.addAttribute("topics", topics);
     }
 }

@@ -11,9 +11,7 @@
 <main class="practice-page">
     <div class="practice-container practice-main">
 
-        <!-- =========================
-             PRACTICE SETUP
-        ========================== -->
+        <!-- PRACTICE SETUP -->
         <section class="gp-setup" th:if="${!practiceMode}">
 
             <div class="gp-page-heading">
@@ -43,9 +41,13 @@
             <form th:unless="${#lists.isEmpty(subjects)}"
                   th:action="@{/practice}"
                   method="get"
-                  class="gp-setup-form">
+                  class="gp-setup-form"
+                  id="practiceSetupForm">
 
-                <input type="hidden" name="start" value="true">
+                <input type="hidden"
+                       name="start"
+                       value="true"
+                       id="startPracticeInput">
 
                 <!-- SUBJECT -->
                 <section class="gp-setup-section">
@@ -64,12 +66,17 @@
                         <div class="gp-select-wrap">
                             <i class="fa-solid fa-book-open" aria-hidden="true"></i>
 
-                            <select id="subject" name="subject" required>
+                            <select id="subject"
+                                    name="subject"
+                                    required
+                                    onchange="refreshPracticeTopics()">
+
                                 <option th:each="item : ${subjects}"
                                         th:value="${item}"
                                         th:text="${item}"
                                         th:selected="${item == selectedSubject}">
                                 </option>
+
                             </select>
 
                             <i class="fa-solid fa-chevron-down gp-select-arrow"
@@ -138,9 +145,7 @@
         </section>
 
 
-        <!-- =========================
-             ACTIVE PRACTICE SESSION
-        ========================== -->
+        <!-- ACTIVE PRACTICE SESSION -->
         <section class="practice-layout" th:if="${practiceMode}">
 
             <!-- QUESTION PANEL -->
@@ -164,7 +169,6 @@
                     </div>
 
                 </div>
-
 
                 <!-- EMPTY SESSION -->
                 <div class="empty-session"
@@ -190,7 +194,6 @@
 
                 </div>
 
-
                 <!-- QUESTIONS CONTAINER -->
                 <div th:unless="${#lists.isEmpty(questions)}"
                      id="practiceQuestionContainer"
@@ -203,6 +206,8 @@
                              th:attr="data-question-index=${stat.index},
                                       data-question-type=${question.questionType},
                                       data-correct-answer=${question.correctAnswer},
+                                      data-nat-min=${question.natMin},
+                                      data-nat-max=${question.natMax},
                                       data-explanation=${question.explanation}">
 
                         <!-- QUESTION HEADER -->
@@ -229,7 +234,6 @@
                             </span>
 
                         </header>
-
 
                         <!-- QUESTION CONTENT -->
                         <div class="question-content">
@@ -261,13 +265,11 @@
 
                             </div>
 
-
                             <!-- QUESTION TEXT -->
                             <div class="question-text"
                                  th:text="${question.questionText}">
                                 Question text appears here.
                             </div>
-
 
                             <!-- QUESTION TYPE HINTS -->
                             <p class="question-hint"
@@ -288,23 +290,31 @@
                                 Enter your numerical answer.
                             </p>
 
-
                             <!-- NAT ANSWER INPUT -->
-                            <div class="options-list"
+                            <div class="options-list nat-options-list"
                                  th:if="${question.questionType != null and #strings.equalsIgnoreCase(question.questionType, 'NAT')}">
 
-                                <label class="nat-option">
-                                    <span>Your answer</span>
-                                    <input type="number"
+                                <div class="nat-option">
+                                    <label th:for="|nat-answer-${stat.index}|"
+                                           class="nat-answer-label">
+                                        Your numerical answer
+                                    </label>
+
+                                    <input type="text"
+                                           th:id="|nat-answer-${stat.index}|"
                                            class="nat-answer"
-                                           step="any"
                                            inputmode="decimal"
-                                           placeholder="Enter numerical answer"
+                                           autocomplete="off"
+                                           spellcheck="false"
+                                           placeholder="e.g. 12 or 0.27"
                                            aria-label="Your numerical answer">
-                                </label>
+                                </div>
+
+                                <p class="nat-input-hint">
+                                    Enter an integer or decimal value, for example 12, 0.27 or -2.5.
+                                </p>
 
                             </div>
-
 
                             <!-- MCQ / MSQ OPTIONS -->
                             <div class="options-list"
@@ -348,12 +358,10 @@
 
                             </div>
 
-
                             <!-- ANSWER FEEDBACK -->
                             <p class="practice-feedback"
                                aria-live="polite"
                                aria-atomic="true"></p>
-
 
                             <!-- ANSWER AND EXPLANATION -->
                             <section class="answer-result"
@@ -365,7 +373,6 @@
                                 <p class="answer-result-explanation"></p>
 
                             </section>
-
 
                             <!-- QUESTION NAVIGATION -->
                             <div class="question-actions">
@@ -394,10 +401,7 @@
                         </div>
                     </article>
 
-
-                    <!-- =========================
-                         SESSION RESULT SCREEN
-                    ========================== -->
+                    <!-- SESSION RESULT SCREEN -->
                     <section class="session-complete"
                              id="sessionComplete"
                              hidden
@@ -445,10 +449,7 @@
                 </div>
             </div>
 
-
-            <!-- =========================
-                 RIGHT SIDEBAR
-            ========================== -->
+            <!-- RIGHT SIDEBAR -->
             <aside id="practiceSidebar"
                    class="practice-sidebar"
                    th:unless="${#lists.isEmpty(questions)}"
@@ -505,7 +506,6 @@
 
                 </section>
 
-
                 <!-- QUESTION PALETTE -->
                 <section class="sidebar-card question-navigator-card"
                          aria-labelledby="questionPaletteTitle">
@@ -556,7 +556,6 @@
 
                 </section>
 
-
                 <!-- PRACTICE TIPS -->
                 <section class="sidebar-card instructions-card">
 
@@ -579,8 +578,7 @@
 
                 </section>
 
-
-                <!-- END SESSION: BUTTON, NOT LINK -->
+                <!-- END SESSION -->
                 <button type="button"
                         class="practice-btn btn-outline end-session">
                     <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
@@ -594,15 +592,29 @@
     </div>
 </main>
 
-
 <!-- COMMON FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- COMMON HEADER JS -->
 <script th:src="@{/js/header.js}" defer></script>
-
-<!-- PRACTICE PAGE JS -->
 <script th:src="@{/js/practice.js}" defer></script>
+
+<!-- SUBJECT CHANGE HANDLER -->
+<script>
+    function refreshPracticeTopics() {
+        const subjectElement = document.getElementById("subject");
+        const form = document.getElementById("practiceSetupForm");
+
+        if (!subjectElement || !subjectElement.value || !form) {
+            return;
+        }
+
+        const url = new URL(form.action, window.location.origin);
+        url.searchParams.set("subject", subjectElement.value);
+        url.searchParams.delete("start");
+
+        window.location.href = url.toString();
+    }
+</script>
 
 </body>
 </html>

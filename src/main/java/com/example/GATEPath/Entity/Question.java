@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -33,7 +35,12 @@ public class Question {
     @Column(name = "correct_answer", columnDefinition = "TEXT")
     private String correctAnswer;
 
-    // Read the actual explanation column from MySQL.
+    @Column(name = "nat_min", precision = 15, scale = 6)
+    private BigDecimal natMin;
+
+    @Column(name = "nat_max", precision = 15, scale = 6)
+    private BigDecimal natMax;
+
     @Column(name = "explanation", columnDefinition = "TEXT")
     private String explanation;
 
@@ -125,6 +132,22 @@ public class Question {
 
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
+    }
+
+    public BigDecimal getNatMin() {
+        return natMin;
+    }
+
+    public void setNatMin(BigDecimal natMin) {
+        this.natMin = natMin;
+    }
+
+    public BigDecimal getNatMax() {
+        return natMax;
+    }
+
+    public void setNatMax(BigDecimal natMax) {
+        this.natMax = natMax;
     }
 
     public String getExplanation() {
