@@ -12,5 +12,29 @@ public class HomeController {
         return "admin/home";
     }
 
-    
+    @GetMapping("/about")
+    public String about() {
+        return "admin/about";
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "admin/contact";
+    }
+
+@GetMapping("/privacy")
+public String privacy() {
+    return "admin/privacy";
+}
+@GetMapping("/terms")
+public String terms() {
+    return "admin/terms";
+}
+
+
+@GetMapping("/credits")
+public String credits() {
+    return "admin/credits";
+}
+
 }

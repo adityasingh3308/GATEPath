@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='GATEPath | Mock Tests', pageCss='mock-tests.css')}"></head>
+
+<body class="gp-mock-tests-body">
+
+<!-- COMMON HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="mock-page">
+    <div class="mock-container">
+
+        <!-- PAGE HERO -->
+        <section class="mock-hero">
+
+            <div class="hero-content">
+                <span class="eyebrow">
+                    <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+                    GATE EXAM PREPARATION
+                </span>
+
+                <h1>
+                    Test your preparation.
+                    <span>Build your confidence.</span>
+                </h1>
+
+                <p>
+                    Experience exam-style mock tests, evaluate your preparation,
+                    and identify the areas where you can improve.
+                </p>
+
+                <div class="hero-highlights">
+                    <span>
+                        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                        Timed examinations
+                    </span>
+
+                    <span>
+                        <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                        Performance tracking
+                    </span>
+                </div>
+            </div>
+
+            <div class="hero-art" aria-hidden="true">
+                <div class="hero-art-glow"></div>
+
+                <div class="hero-document">
+                    <div class="document-top">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                        <span>MOCK TEST</span>
+                    </div>
+
+                    <div class="document-line document-line-wide"></div>
+                    <div class="document-line"></div>
+
+                    <div class="document-question">
+                        <span>01</span>
+                        <div>
+                            <div class="document-line document-line-wide"></div>
+                            <div class="document-line"></div>
+                        </div>
+                    </div>
+
+                    <div class="document-question">
+                        <span>02</span>
+                        <div>
+                            <div class="document-line document-line-wide"></div>
+                            <div class="document-line"></div>
+                        </div>
+                    </div>
+
+                    <div class="document-score">
+                        <i class="fa-solid fa-check"></i>
+                        Ready to begin
+                    </div>
+                </div>
+
+                <div class="hero-floating-icon floating-clock">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+
+                <div class="hero-floating-icon floating-chart">
+                    <i class="fa-solid fa-chart-column"></i>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- MOCK TEST LIST -->
+        <section class="mock-content">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">YOUR EXAM ARENA</span>
+                    <h2>Available Mock Tests</h2>
+                    <p>
+                        Choose an examination and challenge your current preparation.
+                    </p>
+                </div>
+
+                <div class="test-count">
+                    <span class="count-number"
+                          th:text="${mockTests != null ? #lists.size(mockTests) : 0}">
+                        0
+                    </span>
+                    <span>Available</span>
+                </div>
+            </div>
+
+            <!-- AVAILABLE TESTS -->
+            <div class="mock-grid"
+                 th:if="${mockTests != null and !#lists.isEmpty(mockTests)}">
+
+                <article class="mock-card"
+                         th:each="test : ${mockTests}">
+
+                    <div class="card-top">
+                        <div class="test-icon">
+                            <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                        </div>
+
+                        <span class="status-pill">
+                            <span class="status-dot"></span>
+                            Available
+                        </span>
+                    </div>
+
+                    <div class="card-content">
+
+                        <span class="exam-tag">
+                            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+                            GATE MOCK EXAM
+                        </span>
+
+                        <h3 th:text="${test.title}">
+                            GATE CSE Full-Length Mock Test
+                        </h3>
+
+                        <p class="test-description"
+                           th:text="${test.description != null and !#strings.isEmpty(test.description)
+                               ? test.description
+                               : 'Evaluate your preparation with a complete GATE-style mock examination.'}">
+                            Evaluate your preparation with a complete GATE-style mock examination.
+                        </p>
+
+                        <!-- TEST STATISTICS -->
+                        <div class="test-stats">
+
+                            <div class="stat">
+                                <i class="fa-solid fa-list-ol" aria-hidden="true"></i>
+                                <div>
+                                    <strong th:text="${test.totalQuestions}">65</strong>
+                                    <span>Questions</span>
+                                </div>
+                            </div>
+
+                            <div class="stat">
+                                <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                                <div>
+                                    <strong th:text="${test.durationMinutes + ' min'}">180 min</strong>
+                                    <span>Duration</span>
+                                </div>
+                            </div>
+
+                            <div class="stat">
+                                <i class="fa-solid fa-star" aria-hidden="true"></i>
+                                <div>
+                                    <strong th:text="${test.totalMarks}">100</strong>
+                                    <span>Total marks</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="attempt-info"
+                             th:if="${test.maxAttempts != null}">
+                            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                            Maximum
+                            <strong th:text="${test.maxAttempts}">2</strong>
+                            attempts per user
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <span class="card-footer-note">
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                            Exam-style assessment
+                        </span>
+
+                        <a class="start-button"
+                           th:href="@{/mock-tests/{id}/instructions(id=${test.id})}">
+                            <span>View Instructions</span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
+                </article>
+
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-state"
+                 th:if="${mockTests == null or #lists.isEmpty(mockTests)}"
+                 role="status">
+
+                <div class="empty-icon">
+                    <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+                </div>
+
+                <span class="section-label">COMING UP</span>
+
+                <h3>Your next challenge starts here.</h3>
+
+                <p>
+                    No mock tests are available right now. Once an examination
+                    is configured and activated, it will appear here.
+                </p>
+
+                <a th:href="@{/}"
+                   class="home-button">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i>
+                    Back to Home
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- FEATURES -->
+        <section class="feature-strip"
+                 aria-label="Mock test features">
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-stopwatch" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h3>Timed Assessment</h3>
+                    <p>Practise managing your exam time.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h3>Exam-Style Interface</h3>
+                    <p>Attempt questions in an organised layout.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-chart-simple" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h3>Track Your Progress</h3>
+                    <p>Use your results to guide preparation.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<!-- COMMON FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

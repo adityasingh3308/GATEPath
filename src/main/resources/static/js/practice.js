@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const progressFill = document.getElementById("practiceProgress");
     const progressCaption = document.getElementById("progressCaption");
     const progressTrack = document.getElementById("practiceProgressTrack");
+
     const sidebarCorrect = document.getElementById("sidebarCorrect");
     const sidebarIncorrect = document.getElementById("sidebarIncorrect");
 
@@ -34,32 +35,40 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".end-session")
     );
 
+    // Each question is identified by its zero-based index.
     const attemptedQuestions = new Set();
     const checkedQuestions = new Set();
     const correctQuestions = new Set();
+    const unavailableQuestions = new Set();
 
     let currentIndex = 0;
     let sessionFinished = false;
 
-    // Allows integers, decimals, negative numbers and leading decimal points.
-    // Examples: 12, -3, 0.27, .5, 12.50
+    /* =====================================================
+       NUMERICAL ANSWERS
+    ===================================================== */
+
     function parseNumericAnswer(value) {
         const text = String(value ?? "").trim();
 
-        if (!text || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) {
+        if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) {
             return null;
         }
 
         const number = Number(text);
+
         return Number.isFinite(number) ? number : null;
     }
 
     function formatNumber(value) {
         if (!Number.isFinite(value)) return "";
 
-        // Avoid displaying unnecessary zeros such as 0.270000.
         return String(Number(value.toPrecision(12)));
     }
+
+    /* =====================================================
+       QUESTION HELPERS
+    ===================================================== */
 
     function getQuestionIndex(slide) {
         const index = Number(slide.dataset.questionIndex);
@@ -70,16 +79,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getQuestionType(slide) {
-        return (slide.dataset.questionType || "").trim().toUpperCase();
+        return (slide.dataset.questionType || "")
+            .trim()
+            .toUpperCase();
     }
 
     function getCorrectOptions(slide) {
         const raw = (slide.dataset.correctAnswer || "").trim();
 
-        if (!raw || !/^[A-Da-d\s,;]+$/.test(raw)) return [];
+        if (!raw || !/^[A-Da-d\s,;]+$/.test(raw)) {
+            return [];
+        }
 
         return [...new Set(
-            (raw.match(/[A-D]/gi) || []).map(value => value.toUpperCase())
+            (raw.match(/[A-D]/gi) || [])
+                .map(value => value.toUpperCase())
         )].sort();
     }
 
@@ -88,7 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
             slide.querySelectorAll(
                 'input[type="radio"]:checked, input[type="checkbox"]:checked'
             )
-        ).map(input => input.value.trim().toUpperCase()).sort();
+        )
+            .map(input => input.value.trim().toUpperCase())
+            .sort();
     }
 
     function getNatInput(slide) {
@@ -106,10 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return { min, max };
         }
 
-        // Backward compatibility: older NAT records may only have
-        // their numerical answer stored in correct_answer.
-        const raw = (slide.dataset.correctAnswer || "").trim();
-        const expected = parseNumericAnswer(raw);
+        // Compatibility with older NAT records that only have
+        // correct_answer populated.
+        const expected = parseNumericAnswer(slide.dataset.correctAnswer);
 
         if (expected !== null) {
             return { min: expected, max: expected };
@@ -121,21 +136,25 @@ document.addEventListener("DOMContentLoaded", () => {
     function getNatExpectedText(slide) {
         const range = getNatRange(slide);
 
-        if (range) {
-            if (range.min === range.max) {
-                return formatNumber(range.min);
-            }
+        if (!range) return "";
 
-            return `${formatNumber(range.min)} – ${formatNumber(range.max)}`;
+        if (range.min === range.max) {
+            return formatNumber(range.min);
         }
 
-        return "";
+        return `${formatNumber(range.min)} – ${formatNumber(range.max)}`;
+    }
+
+    function getExplanation(slide) {
+        return (slide.dataset.explanation || "").trim();
     }
 
     function hasAnswer(slide) {
         if (getQuestionType(slide) === "NAT") {
             const input = getNatInput(slide);
-            return !!input && parseNumericAnswer(input.value) !== null;
+
+            return !!input &&
+                parseNumericAnswer(input.value) !== null;
         }
 
         return getSelectedOptions(slide).length > 0;
@@ -145,23 +164,23 @@ document.addEventListener("DOMContentLoaded", () => {
         return slide.dataset.answerLocked === "true";
     }
 
-    function getExplanation(slide) {
-        return (slide.dataset.explanation || "").trim();
-    }
+    /* =====================================================
+       ANSWER VALIDATION
+    ===================================================== */
 
     function checkCorrectness(slide) {
         const type = getQuestionType(slide);
 
-        // NAT answers come from nat_min / nat_max first.
-        // Do not reject a NAT question just because correct_answer is blank.
         if (type === "NAT") {
             const input = getNatInput(slide);
             if (!input) return null;
 
             const entered = parseNumericAnswer(input.value);
+
             if (entered === null) return false;
 
             const range = getNatRange(slide);
+
             if (!range) return null;
 
             const tolerance = 0.000001;
@@ -170,9 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 entered <= range.max + tolerance;
         }
 
-        const raw = (slide.dataset.correctAnswer || "").trim();
-        if (!raw) return null;
-
         if (type === "MCQ" || type === "MSQ") {
             const correct = getCorrectOptions(slide);
             const selected = getSelectedOptions(slide);
@@ -180,19 +196,31 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!correct.length) return null;
 
             if (type === "MCQ") {
-                return selected.length === 1 && selected[0] === correct[0];
+                return selected.length === 1 &&
+                    selected[0] === correct[0];
             }
 
+            // MSQ requires an exact match, including every
+            // correct option and no extra incorrect options.
             return selected.length === correct.length &&
-                selected.every((value, index) => value === correct[index]);
+                selected.every(
+                    (value, index) => value === correct[index]
+                );
         }
 
         return null;
     }
 
+    /* =====================================================
+       FEEDBACK AND RESULT DISPLAY
+    ===================================================== */
+
     function showFeedback(slide, message) {
         const feedback = slide.querySelector(".practice-feedback");
-        if (feedback) feedback.textContent = message;
+
+        if (feedback) {
+            feedback.textContent = message;
+        }
     }
 
     function clearResult(slide) {
@@ -204,11 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (result) {
             result.hidden = true;
-            result.classList.remove("result-correct", "result-incorrect");
+            result.classList.remove(
+                "result-correct",
+                "result-incorrect"
+            );
         }
 
         const title = slide.querySelector(".answer-result-title");
-        const explanation = slide.querySelector(".answer-result-explanation");
+        const explanation = slide.querySelector(
+            ".answer-result-explanation"
+        );
 
         if (title) title.textContent = "";
         if (explanation) explanation.textContent = "";
@@ -217,31 +250,39 @@ document.addEventListener("DOMContentLoaded", () => {
     function displayResult(slide, isCorrect, unavailable = false) {
         const result = slide.querySelector(".answer-result");
         const title = slide.querySelector(".answer-result-title");
-        const explanation = slide.querySelector(".answer-result-explanation");
+        const explanation = slide.querySelector(
+            ".answer-result-explanation"
+        );
 
         if (!result || !title || !explanation) return;
 
         result.hidden = false;
-        result.classList.remove("result-correct", "result-incorrect");
+        result.classList.remove(
+            "result-correct",
+            "result-incorrect"
+        );
 
         if (unavailable) {
             title.textContent = "Answer key unavailable";
+
             explanation.textContent =
-                "Correct answer available nahi hai. Question bank mein correct_answer aur NAT answer range verify karein.";
+                "This question cannot be evaluated because its answer key " +
+                "is missing or invalid. Please verify the question bank.";
+
             return;
         }
 
-        result.classList.add(isCorrect ? "result-correct" : "result-incorrect");
+        result.classList.add(
+            isCorrect ? "result-correct" : "result-incorrect"
+        );
 
         const type = getQuestionType(slide);
-        let answerText;
+        let answerText = "";
 
         if (type === "MCQ" || type === "MSQ") {
             answerText = getCorrectOptions(slide).join(", ");
         } else if (type === "NAT") {
             answerText = getNatExpectedText(slide);
-        } else {
-            answerText = (slide.dataset.correctAnswer || "").trim();
         }
 
         title.textContent = isCorrect
@@ -252,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         explanation.textContent = explanationText
             ? `Explanation: ${explanationText}`
-            : "Is question ki explanation available nahi hai.";
+            : "Explanation is not available for this question.";
     }
 
     function highlightOptions(slide) {
@@ -264,6 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!input) return;
 
             const value = input.value.trim().toUpperCase();
+
             option.classList.remove("is-correct", "is-incorrect");
 
             if (correct.includes(value)) {
@@ -285,50 +327,86 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (button) {
             button.disabled = true;
-            button.textContent = "Answer Checked";
+            button.innerHTML =
+                '<i class="fa-solid fa-check" aria-hidden="true"></i> ' +
+                "Answer Checked";
         }
 
         slide.dataset.answerLocked = "true";
     }
 
+    /* =====================================================
+       PROGRESS AND PALETTE
+    ===================================================== */
+
+    function getIncorrectCount() {
+        return [...checkedQuestions].filter(index =>
+            !correctQuestions.has(index) &&
+            !unavailableQuestions.has(index)
+        ).length;
+    }
+
     function updateProgress() {
         const attempted = attemptedQuestions.size;
-        const percentage = Math.round((attempted / slides.length) * 100);
+        const percentage = Math.round(
+            (attempted / slides.length) * 100
+        );
 
-        if (attemptedCount) attemptedCount.textContent = String(attempted);
-        if (progressFill) progressFill.style.width = `${percentage}%`;
+        if (attemptedCount) {
+            attemptedCount.textContent = String(attempted);
+        }
+
+        if (progressFill) {
+            progressFill.style.width = `${percentage}%`;
+        }
 
         if (progressTrack) {
-            progressTrack.setAttribute("aria-valuenow", String(percentage));
+            progressTrack.setAttribute(
+                "aria-valuenow",
+                String(percentage)
+            );
         }
 
         if (progressCaption) {
             progressCaption.textContent =
-                `${attempted} of ${slides.length} questions attempted (${percentage}%)`;
+                `${attempted} of ${slides.length} questions attempted ` +
+                `(${percentage}%)`;
         }
 
         if (sidebarCorrect) {
-            sidebarCorrect.textContent = String(correctQuestions.size);
+            sidebarCorrect.textContent =
+                String(correctQuestions.size);
         }
 
         if (sidebarIncorrect) {
-            sidebarIncorrect.textContent = String(
-                [...checkedQuestions].filter(
-                    index => !correctQuestions.has(index)
-                ).length
-            );
+            sidebarIncorrect.textContent =
+                String(getIncorrectCount());
         }
 
         paletteButtons.forEach(button => {
             const index = Number(button.dataset.jumpIndex);
 
-            button.classList.toggle("is-attempted", attemptedQuestions.has(index));
-            button.classList.toggle("is-correct", correctQuestions.has(index));
+            button.classList.toggle(
+                "is-attempted",
+                attemptedQuestions.has(index)
+            );
+
+            button.classList.toggle(
+                "is-correct",
+                correctQuestions.has(index)
+            );
+
             button.classList.toggle(
                 "is-incorrect",
-                checkedQuestions.has(index) && !correctQuestions.has(index)
+                checkedQuestions.has(index) &&
+                !correctQuestions.has(index) &&
+                !unavailableQuestions.has(index)
             );
-            button.classList.toggle("is-current", index === currentIndex);
+
+            button.classList.toggle(
+                "is-current",
+                index === currentIndex
+            );
 
             if (index === currentIndex) {
                 button.setAttribute("aria-current", "step");
@@ -342,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = getQuestionIndex(slide);
         if (index < 0) return;
 
-        if (hasAnswer(slide)) {
+        if (hasAnswer(slide) || isAnswerLocked(slide)) {
             attemptedQuestions.add(index);
         } else {
             attemptedQuestions.delete(index);
@@ -351,22 +429,33 @@ document.addEventListener("DOMContentLoaded", () => {
         updateProgress();
     }
 
+    /* =====================================================
+       GRADING
+    ===================================================== */
+
     function gradeAnswer(slide, index) {
+        if (isAnswerLocked(slide)) return;
+
         const result = checkCorrectness(slide);
 
         attemptedQuestions.add(index);
         checkedQuestions.add(index);
+
         correctQuestions.delete(index);
+        unavailableQuestions.delete(index);
 
         if (result === true) {
             correctQuestions.add(index);
+        } else if (result === null) {
+            unavailableQuestions.add(index);
         }
 
         if (result === null) {
             displayResult(slide, false, true);
         } else {
-            if (getQuestionType(slide) === "MCQ" ||
-                getQuestionType(slide) === "MSQ") {
+            const type = getQuestionType(slide);
+
+            if (type === "MCQ" || type === "MSQ") {
                 highlightOptions(slide);
             }
 
@@ -386,6 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? "Enter a valid number, for example 12 or 0.27."
                     : "Please select an answer first."
             );
+
             return;
         }
 
@@ -398,8 +488,13 @@ document.addEventListener("DOMContentLoaded", () => {
         updateProgress();
     }
 
+    /* =====================================================
+       QUESTION NAVIGATION
+    ===================================================== */
+
     function showQuestion(index) {
         if (sessionFinished || !Number.isInteger(index)) return;
+
         if (index < 0 || index >= slides.length) return;
 
         slides.forEach((slide, slideIndex) => {
@@ -409,21 +504,35 @@ document.addEventListener("DOMContentLoaded", () => {
         currentIndex = index;
 
         const activeSlide = slides[currentIndex];
-        const previousButton = activeSlide.querySelector(".previousQuestion");
-        const nextButton = activeSlide.querySelector(".nextQuestion");
-        const checkButton = activeSlide.querySelector(".checkAnswerButton");
 
-        if (previousButton) previousButton.disabled = currentIndex === 0;
+        const previousButton = activeSlide.querySelector(
+            ".previousQuestion"
+        );
+
+        const nextButton = activeSlide.querySelector(
+            ".nextQuestion"
+        );
+
+        const checkButton = activeSlide.querySelector(
+            ".checkAnswerButton"
+        );
+
+        if (previousButton) {
+            previousButton.disabled = currentIndex === 0;
+        }
 
         if (nextButton) {
-            nextButton.innerHTML = currentIndex === slides.length - 1
-                ? 'Finish Session <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>'
-                : 'Next Question <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
+            nextButton.innerHTML =
+                currentIndex === slides.length - 1
+                    ? 'Finish Session <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>'
+                    : 'Next Question <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
         }
 
         if (checkButton && isAnswerLocked(activeSlide)) {
             checkButton.disabled = true;
-            checkButton.textContent = "Answer Checked";
+            checkButton.innerHTML =
+                '<i class="fa-solid fa-check" aria-hidden="true"></i> ' +
+                "Answer Checked";
         }
 
         updateProgress();
@@ -434,14 +543,67 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    /* =====================================================
+       FINAL RESULTS
+    ===================================================== */
+
+    function updateUnavailableResultRow(count) {
+        const breakdown = document.querySelector(
+            ".gp-result-breakdown"
+        );
+
+        if (!breakdown) return;
+
+        let row = document.getElementById("finalUnavailableRow");
+
+        if (count <= 0) {
+            if (row) row.remove();
+            return;
+        }
+
+        if (!row) {
+            row = document.createElement("div");
+            row.id = "finalUnavailableRow";
+            row.className = "gp-result-row";
+
+            const label = document.createElement("span");
+            const icon = document.createElement("i");
+            const text = document.createElement("span");
+            const value = document.createElement("strong");
+
+            icon.className = "fa-solid fa-circle-info";
+            icon.setAttribute("aria-hidden", "true");
+            icon.style.color = "var(--practice-amber)";
+
+            text.textContent = "Answer key unavailable";
+            value.id = "finalUnavailable";
+            value.textContent = "0";
+
+            label.append(icon, text);
+            row.append(label, value);
+            breakdown.appendChild(row);
+        }
+
+        const value = row.querySelector("#finalUnavailable");
+
+        if (value) {
+            value.textContent = String(count);
+        }
+    }
+
     function finishSession() {
         if (sessionFinished) return;
 
-        // Automatically grade answered questions that have not been checked.
+        // Automatically grade answers entered but not checked.
+        // Questions without an answer remain unanswered.
         slides.forEach(slide => {
             const index = getQuestionIndex(slide);
 
-            if (index >= 0 && !isAnswerLocked(slide) && hasAnswer(slide)) {
+            if (
+                index >= 0 &&
+                !isAnswerLocked(slide) &&
+                hasAnswer(slide)
+            ) {
                 gradeAnswer(slide, index);
             }
         });
@@ -450,26 +612,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const attempted = checkedQuestions.size;
         const correct = correctQuestions.size;
-        const incorrect = [...checkedQuestions].filter(
-            index => !correctQuestions.has(index)
-        ).length;
-        const unanswered = slides.length - attempted;
-        const accuracy = attempted > 0
-            ? Math.round((correct / attempted) * 100)
+        const incorrect = getIncorrectCount();
+        const unavailable = unavailableQuestions.size;
+
+        const unanswered = Math.max(
+            0,
+            slides.length - attempted
+        );
+
+        // Missing/invalid answer keys are excluded from the
+        // accuracy denominator.
+        const evaluated = correct + incorrect;
+
+        const accuracy = evaluated > 0
+            ? Math.round((correct / evaluated) * 100)
             : 0;
 
         slides.forEach(slide => {
             slide.hidden = true;
         });
 
-        if (finalAttempted) finalAttempted.textContent = String(attempted);
-        if (finalCorrect) finalCorrect.textContent = String(correct);
-        if (finalIncorrect) finalIncorrect.textContent = String(incorrect);
-        if (finalUnanswered) finalUnanswered.textContent = String(unanswered);
-        if (finalAccuracy) finalAccuracy.textContent = `${accuracy}%`;
+        if (finalAttempted) {
+            finalAttempted.textContent = String(attempted);
+        }
 
-        if (practiceSidebar) practiceSidebar.hidden = true;
-        if (sessionHeader) sessionHeader.hidden = true;
+        if (finalCorrect) {
+            finalCorrect.textContent = String(correct);
+        }
+
+        if (finalIncorrect) {
+            finalIncorrect.textContent = String(incorrect);
+        }
+
+        if (finalUnanswered) {
+            finalUnanswered.textContent = String(unanswered);
+        }
+
+        if (finalAccuracy) {
+            finalAccuracy.textContent = `${accuracy}%`;
+        }
+
+        // Update the caption to reflect the actual count.
+        const attemptedCaption = document.querySelector(
+            ".gp-result-attempted .gp-result-stat-caption"
+        );
+
+        if (attemptedCaption) {
+            attemptedCaption.textContent = "Questions answered";
+        }
+
+        updateUnavailableResultRow(unavailable);
+
+        if (practiceSidebar) {
+            practiceSidebar.hidden = true;
+        }
+
+        if (sessionHeader) {
+            sessionHeader.hidden = true;
+        }
 
         if (practiceLayout) {
             practiceLayout.classList.add("session-finished");
@@ -480,7 +680,9 @@ document.addEventListener("DOMContentLoaded", () => {
             sessionComplete.style.removeProperty("display");
             sessionComplete.setAttribute("aria-hidden", "false");
         } else {
-            console.error("Missing #sessionComplete element in practice.html.");
+            console.error(
+                "Missing #sessionComplete element in practice.html."
+            );
         }
 
         container.querySelectorAll(
@@ -499,7 +701,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Answer changes
+    /* =====================================================
+       ANSWER INPUT EVENTS
+    ===================================================== */
+
     slides.forEach(slide => {
         slide.querySelectorAll("input").forEach(input => {
             function handleChange() {
@@ -509,8 +714,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 showFeedback(slide, "");
 
                 const index = getQuestionIndex(slide);
+
                 checkedQuestions.delete(index);
                 correctQuestions.delete(index);
+                unavailableQuestions.delete(index);
 
                 updateAttempted(slide);
             }
@@ -532,10 +739,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Previous / Next
+    /* =====================================================
+       PREVIOUS / NEXT
+    ===================================================== */
+
     slides.forEach((slide, index) => {
-        const previousButton = slide.querySelector(".previousQuestion");
-        const nextButton = slide.querySelector(".nextQuestion");
+        const previousButton = slide.querySelector(
+            ".previousQuestion"
+        );
+
+        const nextButton = slide.querySelector(
+            ".nextQuestion"
+        );
 
         if (previousButton) {
             previousButton.addEventListener("click", event => {
@@ -550,17 +765,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (sessionFinished) return;
 
-                if (!hasAnswer(slide)) {
-                    showFeedback(
-                        slide,
-                        getQuestionType(slide) === "NAT"
-                            ? "Enter a valid numerical answer before continuing."
-                            : "Please select an answer before continuing."
-                    );
-                    return;
+                // No answer is required to move forward.
+                // If an answer was entered, retain it and mark
+                // the question as attempted.
+                if (hasAnswer(slide)) {
+                    updateAttempted(slide);
                 }
-
-                updateAttempted(slide);
 
                 if (index < slides.length - 1) {
                     showQuestion(index + 1);
@@ -571,21 +781,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Question palette
+    /* =====================================================
+       QUESTION PALETTE
+    ===================================================== */
+
     paletteButtons.forEach(button => {
         button.addEventListener("click", event => {
             event.preventDefault();
+
             if (sessionFinished) return;
 
             const targetIndex = Number(button.dataset.jumpIndex);
 
-            if (Number.isInteger(targetIndex)) {
+            if (
+                Number.isInteger(targetIndex) &&
+                targetIndex >= 0 &&
+                targetIndex < slides.length
+            ) {
                 showQuestion(targetIndex);
             }
         });
     });
 
-    // End session
+    /* =====================================================
+       END SESSION
+    ===================================================== */
+
     endSessionButtons.forEach(button => {
         button.addEventListener("click", event => {
             event.preventDefault();
@@ -593,12 +814,20 @@ document.addEventListener("DOMContentLoaded", () => {
             if (sessionFinished) return;
 
             const shouldEnd = window.confirm(
-                "End this practice session? Answered questions will be evaluated automatically."
+                "End this practice session? Answers you entered " +
+                "will be evaluated automatically. Unanswered " +
+                "questions will remain unanswered."
             );
 
-            if (shouldEnd) finishSession();
+            if (shouldEnd) {
+                finishSession();
+            }
         });
     });
+
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
 
     showQuestion(0);
     updateProgress();

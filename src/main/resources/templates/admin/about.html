@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='GATEPath | About Us', pageCss='about.css')}"></head>
+
+<body class="gp-about-body">
+
+    <!-- Common Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="about-page">
+        <div class="about-container">
+
+            <!-- Hero -->
+            <section class="about-hero">
+                <div class="about-hero-content">
+                    <span class="about-eyebrow">
+                        <i class="bi bi-compass"></i>
+                        ABOUT GATEPATH
+                    </span>
+
+                    <h1>
+                        Your preparation.
+                        <span>Your direction.</span>
+                    </h1>
+
+                    <p>
+                        GATEPath is designed to bring structure to your GATE
+                        preparation journey with organised learning, focused
+                        practice and tools to help you track your progress.
+                    </p>
+
+                    <a th:href="@{/roadmap}" class="about-primary-btn">
+                        Explore Your Roadmap
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                </div>
+
+                <div class="about-hero-art" aria-hidden="true">
+                    <div class="about-orbit orbit-one"></div>
+                    <div class="about-orbit orbit-two"></div>
+
+                    <div class="about-art-card">
+                        <div class="about-art-icon">
+                            <i class="bi bi-signpost-split"></i>
+                        </div>
+
+                        <span class="art-label">YOUR GATE JOURNEY</span>
+                        <h2>Learn.</h2>
+                        <h2>Practice.</h2>
+                        <h2 class="art-highlight">Progress.</h2>
+
+                        <div class="art-progress">
+                            <span></span>
+                        </div>
+
+                        <p>One step at a time.</p>
+                    </div>
+
+                    <div class="about-float-icon float-book">
+                        <i class="bi bi-journal-bookmark"></i>
+                    </div>
+
+                    <div class="about-float-icon float-check">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Introduction -->
+            <section class="about-intro">
+                <div class="about-section-heading">
+                    <span class="about-section-label">WHO WE ARE</span>
+                    <h2>Preparation with a clearer direction.</h2>
+                </div>
+
+                <div class="about-intro-copy">
+                    <p>
+                        Preparing for GATE involves understanding concepts,
+                        covering the syllabus, solving questions and evaluating
+                        your readiness. Keeping these activities organised can
+                        make the preparation process easier to manage.
+                    </p>
+
+                    <p>
+                        GATEPath brings these steps together in one place,
+                        helping learners navigate their preparation journey
+                        through structured resources and practice tools.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Mission -->
+            <section class="about-mission">
+                <div class="mission-icon">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+
+                <div class="mission-content">
+                    <span class="about-section-label">OUR MISSION</span>
+                    <h2>Make every study session count.</h2>
+                    <p>
+                        Our aim is to provide a structured preparation
+                        experience that helps students identify what to study,
+                        practise what they learn and understand where they can
+                        improve.
+                    </p>
+                </div>
+
+                <div class="mission-decoration" aria-hidden="true">
+                    <i class="bi bi-stars"></i>
+                </div>
+            </section>
+
+            <!-- Platform Features -->
+            <section class="about-features">
+                <div class="about-section-heading centered-heading">
+                    <span class="about-section-label">THE GATEPATH EXPERIENCE</span>
+                    <h2>Everything has a place in your plan.</h2>
+                    <p>
+                        Tools designed to support different stages of your
+                        preparation journey.
+                    </p>
+                </div>
+
+                <div class="about-feature-grid">
+
+                    <article class="about-feature-card">
+                        <div class="feature-card-icon icon-purple">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <h3>Structured Syllabus</h3>
+                        <p>
+                            Explore syllabus topics and organise your learning
+                            around the subjects you need to cover.
+                        </p>
+                        <a th:href="@{/syllabus}">
+                            Explore Syllabus
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="about-feature-card">
+                        <div class="feature-card-icon icon-teal">
+                            <i class="bi bi-signpost-2"></i>
+                        </div>
+                        <h3>Preparation Roadmap</h3>
+                        <p>
+                            Follow a planned sequence of preparation phases
+                            and keep your next learning goals in view.
+                        </p>
+                        <a th:href="@{/roadmap}">
+                            View Roadmap
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="about-feature-card">
+                        <div class="feature-card-icon icon-blue">
+                            <i class="bi bi-patch-question"></i>
+                        </div>
+                        <h3>Question Practice</h3>
+                        <p>
+                            Strengthen concepts by solving questions and
+                            learning from explanations.
+                        </p>
+                        <a th:href="@{/practice}">
+                            Start Practising
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="about-feature-card">
+                        <div class="feature-card-icon icon-orange">
+                            <i class="bi bi-clipboard-data"></i>
+                        </div>
+                        <h3>Mock Tests</h3>
+                        <p>
+                            Use exam-style assessments to evaluate your
+                            preparation and identify areas to revisit.
+                        </p>
+                        <a th:href="@{/mock-tests}">
+                            Explore Mock Tests
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- Principles -->
+            <section class="about-principles">
+                <div class="principle-heading">
+                    <span class="about-section-label">OUR APPROACH</span>
+                    <h2>Build understanding. Then build confidence.</h2>
+                </div>
+
+                <div class="principle-list">
+                    <div class="principle-item">
+                        <span class="principle-number">01</span>
+                        <div>
+                            <h3>Learn with purpose</h3>
+                            <p>Understand the topics you are studying and why they matter.</p>
+                        </div>
+                    </div>
+
+                    <div class="principle-item">
+                        <span class="principle-number">02</span>
+                        <div>
+                            <h3>Practise consistently</h3>
+                            <p>Use questions and assessments to reinforce your learning.</p>
+                        </div>
+                    </div>
+
+                    <div class="principle-item">
+                        <span class="principle-number">03</span>
+                        <div>
+                            <h3>Review and progress</h3>
+                            <p>Revisit difficult areas and use your results to guide your next steps.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Closing CTA -->
+            <section class="about-closing">
+                <div>
+                    <span class="about-section-label">YOUR JOURNEY STARTS HERE</span>
+                    <h2>Small steps. Consistent effort. Better preparation.</h2>
+                    <p>
+                        Build your study plan, practise regularly and keep
+                        moving towards your GATE goals.
+                    </p>
+                </div>
+
+                <a th:href="@{/roadmap}" class="about-primary-btn">
+                    Start Your Journey
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Common Footer and Scripts -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

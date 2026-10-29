@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Test Instructions | GATEPath</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/mock-tests.css}">
+</head>
+<body>
+<div class="mock-page">
+
+    <header class="mock-hero">
+        <div class="hero-content">
+            <span class="eyebrow">
+                <i class="bi bi-shield-check"></i> EXAM GUIDELINES
+            </span>
+            <h1>Before You Begin</h1>
+            <p>Read the instructions carefully before starting your GATE CSE mock examination.</p>
+        </div>
+        <div class="hero-icon">
+            <i class="bi bi-clipboard-check"></i>
+        </div>
+    </header>
+
+    <main class="instructions-container">
+
+        <section class="section-heading">
+            <div>
+                <span class="section-label">YOUR EXAM</span>
+                <h2 th:text="${mockTest.title}">GATE CSE Full-Length Mock Test</h2>
+                <p>Make sure you're ready before starting the timer.</p>
+            </div>
+        </section>
+
+        <section class="test-stats instruction-stats">
+            <div class="stat">
+                <i class="bi bi-question-circle"></i>
+                <div>
+                    <strong th:text="${mockTest.totalQuestions}">65</strong>
+                    <span>Questions</span>
+                </div>
+            </div>
+
+            <div class="stat">
+                <i class="bi bi-clock"></i>
+                <div>
+                    <strong th:text="${mockTest.durationMinutes} + ' min'">180 min</strong>
+                    <span>Duration</span>
+                </div>
+            </div>
+
+            <div class="stat">
+                <i class="bi bi-trophy"></i>
+                <div>
+                    <strong th:text="${mockTest.totalMarks}">100</strong>
+                    <span>Total Marks</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="instruction-card">
+            <h3><i class="bi bi-info-circle"></i> General Instructions</h3>
+
+            <ol class="instruction-list">
+                <li>This mock test contains 65 questions and carries 100 marks.</li>
+                <li>The total duration is 180 minutes. The timer starts when you begin the test.</li>
+                <li>The paper is divided into General Aptitude (10 questions) and Core CSE (55 questions).</li>
+                <li>Questions may be MCQ, MSQ, or Numerical Answer Type (NAT).</li>
+                <li>Use the question palette to navigate between questions.</li>
+                <li>You can save an answer, clear a response, or mark a question for review.</li>
+                <li>Your answers are saved as you navigate through the test.</li>
+                <li>When the timer expires, the test will be submitted automatically.</li>
+                <li>You can attempt this mock test a maximum of
+                    <strong th:text="${mockTest.maxAttempts}">2</strong> times.
+                </li>
+            </ol>
+        </section>
+
+        <section class="instruction-card">
+            <h3><i class="bi bi-palette"></i> Question Status Guide</h3>
+
+            <div class="status-guide">
+                <div class="guide-item">
+                    <span class="guide-dot not-visited"></span>
+                    <span>Not Visited</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-dot answered"></span>
+                    <span>Answered</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-dot unanswered"></span>
+                    <span>Not Answered</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-dot review"></span>
+                    <span>Marked for Review</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="instruction-notice">
+            <i class="bi bi-exclamation-triangle"></i>
+            <div>
+                <strong>Important</strong>
+                <p>Once you start, your attempt and timer will be recorded. Make sure you have enough uninterrupted time to complete the examination.</p>
+            </div>
+        </section>
+
+        <div class="instruction-actions">
+            <a th:href="@{/mock-tests}" class="home-button">
+                <i class="bi bi-arrow-left"></i> Back to Mock Tests
+            </a>
+
+            <form th:action="@{/mock-tests/{id}/start(id=${mockTest.id})}"
+                  method="post">
+                <button type="submit" class="start-button">
+                    Start Mock Test <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <footer class="mock-footer">
+        <a th:href="@{/}" class="footer-brand">GATEPath</a>
+        <span>Learn. Practice. Progress.</span>
+        <span>© 2026 GATEPath</span>
+    </footer>
+
+</div>
+</body>
+</html>

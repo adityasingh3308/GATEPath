@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='GATEPath | Contact Us', pageCss='contact.css')}"></head>
+
+<body class="gp-contact-body">
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="gp-contact-page">
+
+        <!-- Hero -->
+        <section class="gp-contact-hero">
+            <div class="gp-contact-hero-glow gp-contact-glow-one"></div>
+            <div class="gp-contact-hero-glow gp-contact-glow-two"></div>
+
+            <div class="gp-contact-container gp-contact-hero-content">
+                <span class="gp-contact-eyebrow">
+                    <i class="bi bi-chat-square-text"></i>
+                    WE'RE HERE TO HELP
+                </span>
+
+                <h1>Let's make your<br>
+                    <span>GATE preparation better.</span>
+                </h1>
+
+                <p>
+                    Have a question, found an issue, or want to share an idea?
+                    We'd love to hear from you.
+                </p>
+
+                <a href="#contact-form" class="gp-contact-primary-btn">
+                    Get in touch
+                    <i class="bi bi-arrow-down-right"></i>
+                </a>
+            </div>
+
+            <div class="gp-contact-hero-decoration" aria-hidden="true">
+                <div class="gp-contact-decoration-card">
+                    <i class="bi bi-envelope-paper"></i>
+                    <span>We're listening</span>
+                    <small>Your feedback matters.</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact content -->
+        <section class="gp-contact-section">
+            <div class="gp-contact-container">
+
+                <div class="gp-contact-section-heading">
+                    <span class="gp-contact-label">CONTACT GATEPATH</span>
+                    <h2>How can we help you?</h2>
+                    <p>Choose the way that works best for you.</p>
+                </div>
+
+                <div class="gp-contact-layout">
+
+                    <!-- Information panel -->
+                    <aside class="gp-contact-info">
+                        <span class="gp-contact-info-label">GET IN TOUCH</span>
+                        <h3>Every great improvement starts with a conversation.</h3>
+                        <p>
+                            Send us your questions, suggestions, or feedback.
+                            Help us make GATEPath more useful for every aspirant.
+                        </p>
+
+                        <div class="gp-contact-info-divider"></div>
+
+                        <div class="gp-contact-info-item">
+                            <div class="gp-contact-info-icon">
+                                <i class="bi bi-chat-dots"></i>
+                            </div>
+                            <div>
+                                <h4>General enquiries</h4>
+                                <p>Questions about using GATEPath.</p>
+                            </div>
+                        </div>
+
+                        <div class="gp-contact-info-item">
+                            <div class="gp-contact-info-icon">
+                                <i class="bi bi-lightbulb"></i>
+                            </div>
+                            <div>
+                                <h4>Suggestions & feedback</h4>
+                                <p>Ideas to improve your learning experience.</p>
+                            </div>
+                        </div>
+
+                        <div class="gp-contact-info-item">
+                            <div class="gp-contact-info-icon">
+                                <i class="bi bi-bug"></i>
+                            </div>
+                            <div>
+                                <h4>Report a problem</h4>
+                                <p>Tell us about an issue you encountered.</p>
+                            </div>
+                        </div>
+
+                        <div class="gp-contact-note">
+                            <i class="bi bi-shield-check"></i>
+                            <span>
+                                Please avoid sharing passwords or other sensitive
+                                account information in your message.
+                            </span>
+                        </div>
+                    </aside>
+
+                    <!-- Contact form -->
+                    <section class="gp-contact-form-card" id="contact-form">
+                        <div class="gp-contact-form-heading">
+                            <span class="gp-contact-label">SEND A MESSAGE</span>
+                            <h3>Tell us what's on your mind.</h3>
+                            <p>Fill in the details below to prepare your message.</p>
+                        </div>
+
+                        <form id="gpContactForm" class="gp-contact-form">
+
+                            <div class="gp-contact-field-row">
+                                <div class="gp-contact-field">
+                                    <label for="contactName">Your name</label>
+                                    <input
+                                        type="text"
+                                        id="contactName"
+                                        name="name"
+                                        placeholder="Enter your name"
+                                        maxlength="100"
+                                        autocomplete="name"
+                                        required>
+                                </div>
+
+                                <div class="gp-contact-field">
+                                    <label for="contactEmail">Email address</label>
+                                    <input
+                                        type="email"
+                                        id="contactEmail"
+                                        name="email"
+                                        placeholder="you@example.com"
+                                        maxlength="254"
+                                        autocomplete="email"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="gp-contact-field">
+                                <label for="contactSubject">What is this about?</label>
+                                <select id="contactSubject" name="subject" required>
+                                    <option value="" disabled selected>
+                                        Select a subject
+                                    </option>
+                                    <option value="General enquiry">General enquiry</option>
+                                    <option value="Practice questions">Practice questions</option>
+                                    <option value="Mock tests">Mock tests</option>
+                                    <option value="Technical issue">Technical issue</option>
+                                    <option value="Suggestion or feedback">Suggestion or feedback</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="gp-contact-field">
+                                <label for="contactMessage">Your message</label>
+                                <textarea
+                                    id="contactMessage"
+                                    name="message"
+                                    rows="5"
+                                    maxlength="3000"
+                                    placeholder="Describe your question, feedback, or issue..."
+                                    required></textarea>
+                                <div class="gp-contact-character-count">
+                                    <span id="contactCharCount">0</span>/3000 characters
+                                </div>
+                            </div>
+
+                            <p class="gp-contact-form-notice">
+                                <i class="bi bi-info-circle"></i>
+                                This form currently prepares a message in your email
+                                application. It does not submit data to a server.
+                            </p>
+
+                            <button type="submit" class="gp-contact-submit-btn">
+                                <span>Prepare message</span>
+                                <i class="bi bi-arrow-up-right"></i>
+                            </button>
+
+                            <p id="contactFormStatus"
+                               class="gp-contact-form-status"
+                               role="status"
+                               aria-live="polite"></p>
+
+                        </form>
+                    </section>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom CTA -->
+        <section class="gp-contact-bottom">
+            <div class="gp-contact-container gp-contact-bottom-inner">
+                <div>
+                    <span class="gp-contact-label">YOUR GATE JOURNEY</span>
+                    <h2>Keep learning. Keep progressing.</h2>
+                    <p>Make your next study session count with GATEPath.</p>
+                </div>
+
+                <a th:href="@{/practice}" class="gp-contact-secondary-btn">
+                    Explore practice
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/scripts :: scripts}"></div>
+
+    <script th:src="@{/js/contact.js}"></script>
+
+</body>
+</html>
